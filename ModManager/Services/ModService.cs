@@ -36,7 +36,7 @@ namespace ModManager.Services
         {
             if (Directory.Exists(modFolderPath))
             {
-                return Directory.GetFiles(modFolderPath, "*.pak", SearchOption.TopDirectoryOnly)
+                return Directory.GetFiles(modFolderPath, "*.pak", SearchOption.AllDirectories)
                     .Any(f => !f.EndsWith(".pak-x", StringComparison.OrdinalIgnoreCase));
             }
             return false;
@@ -48,12 +48,12 @@ namespace ModManager.Services
                 return;
             try
             {
-                foreach (var file in Directory.GetFiles(modFolderPath, "*.pak-x", SearchOption.TopDirectoryOnly))
-                    File.Move(file, file.Replace(".pak-x", ".pak"));
-                foreach (var file in Directory.GetFiles(modFolderPath, "*.ucas-x", SearchOption.TopDirectoryOnly))
-                    File.Move(file, file.Replace(".ucas-x", ".ucas"));
-                foreach (var file in Directory.GetFiles(modFolderPath, "*.utoc-x", SearchOption.TopDirectoryOnly))
-                    File.Move(file, file.Replace(".utoc-x", ".utoc"));
+                foreach (var file in Directory.GetFiles(modFolderPath, "*.pak-x", SearchOption.AllDirectories))
+                    File.Move(file, file.Substring(0, file.Length - 2));
+                foreach (var file in Directory.GetFiles(modFolderPath, "*.ucas-x", SearchOption.AllDirectories))
+                    File.Move(file, file.Substring(0, file.Length - 2));
+                foreach (var file in Directory.GetFiles(modFolderPath, "*.utoc-x", SearchOption.AllDirectories))
+                    File.Move(file, file.Substring(0, file.Length - 2));
             }
             catch (Exception ex)
             {
@@ -67,13 +67,13 @@ namespace ModManager.Services
                 return;
             try
             {
-                foreach (var file in Directory.GetFiles(modFolderPath, "*.pak", SearchOption.TopDirectoryOnly)
+                foreach (var file in Directory.GetFiles(modFolderPath, "*.pak", SearchOption.AllDirectories)
                     .Where(f => !f.EndsWith(".pak-x", StringComparison.OrdinalIgnoreCase)))
                     File.Move(file, file + "-x");
-                foreach (var file in Directory.GetFiles(modFolderPath, "*.ucas", SearchOption.TopDirectoryOnly)
+                foreach (var file in Directory.GetFiles(modFolderPath, "*.ucas", SearchOption.AllDirectories)
                     .Where(f => !f.EndsWith(".ucas-x", StringComparison.OrdinalIgnoreCase)))
                     File.Move(file, file + "-x");
-                foreach (var file in Directory.GetFiles(modFolderPath, "*.utoc", SearchOption.TopDirectoryOnly)
+                foreach (var file in Directory.GetFiles(modFolderPath, "*.utoc", SearchOption.AllDirectories)
                     .Where(f => !f.EndsWith(".utoc-x", StringComparison.OrdinalIgnoreCase)))
                     File.Move(file, file + "-x");
             }

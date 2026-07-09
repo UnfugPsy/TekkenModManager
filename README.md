@@ -29,8 +29,8 @@ Download the latest release from the [Releases](../../releases) page. Two builds
 
 | Build | Download | .NET required? | Size |
 |-------|----------|----------------|------|
-| **Self-contained** (recommended) | `TekkenModManager-1.0.0-win-x64-selfcontained.zip` | No — everything is bundled | ~63 MB |
-| **Framework-dependent** | `TekkenModManager-1.0.0-win-x64-framework-dependent.zip` | Yes — [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) | ~1 MB |
+| **Self-contained** (recommended) | `TekkenModManager-1.0.2-win-x64-selfcontained.zip` | No — everything is bundled | ~63 MB |
+| **Framework-dependent** | `TekkenModManager-1.0.2-win-x64-framework-dependent.zip` | Yes — [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) | ~1 MB |
 
 **To install:** extract the ZIP to any folder and run `ModManager.exe`. No setup or admin rights needed.
 

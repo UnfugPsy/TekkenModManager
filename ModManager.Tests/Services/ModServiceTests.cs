@@ -136,6 +136,68 @@ public class ModServiceTests : IDisposable
         Assert.Empty(Directory.GetFiles(folder, "*.utoc-x"));
     }
 
+    // --- Nested subfolder layouts (e.g. Content/Paks) ---
+
+    private string CreateNestedModFolder(string name, bool enabled)
+    {
+        string folder = Path.Combine(_modsDir, name);
+        string nested = Path.Combine(folder, "Content", "Paks");
+        Directory.CreateDirectory(nested);
+        string ext = enabled ? ".pak" : ".pak-x";
+        File.WriteAllText(Path.Combine(nested, $"test{ext}"), "data");
+        return folder;
+    }
+
+    [Fact]
+    public void IsModEnabled_ReturnsTrue_ForEnabledFileInNestedSubfolder()
+    {
+        string folder = CreateNestedModFolder("nested_enabled", enabled: true);
+        Assert.True(_sut.IsModEnabled(folder));
+    }
+
+    [Fact]
+    public void IsModEnabled_ReturnsFalse_ForDisabledFileInNestedSubfolder()
+    {
+        string folder = CreateNestedModFolder("nested_disabled", enabled: false);
+        Assert.False(_sut.IsModEnabled(folder));
+    }
+
+    [Fact]
+    public void ActivateMod_RenamesFilesInNestedSubfolder()
+    {
+        string folder = CreateNestedModFolder("nested_mod", enabled: false);
+        Assert.False(_sut.IsModEnabled(folder));
+
+        _sut.ActivateMod(folder);
+
+        Assert.True(_sut.IsModEnabled(folder));
+        Assert.Empty(Directory.GetFiles(folder, "*.pak-x", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public void DeactivateMod_RenamesFilesInNestedSubfolder()
+    {
+        string folder = CreateNestedModFolder("nested_mod", enabled: true);
+        Assert.True(_sut.IsModEnabled(folder));
+
+        _sut.DeactivateMod(folder);
+
+        Assert.False(_sut.IsModEnabled(folder));
+        Assert.NotEmpty(Directory.GetFiles(folder, "*.pak-x", SearchOption.AllDirectories));
+    }
+
+    [Fact]
+    public void ActivateThenDeactivate_TogglesNestedMod_BothWays()
+    {
+        string folder = CreateNestedModFolder("nested_toggle", enabled: false);
+
+        _sut.ActivateMod(folder);
+        Assert.True(_sut.IsModEnabled(folder));
+
+        _sut.DeactivateMod(folder);
+        Assert.False(_sut.IsModEnabled(folder));
+    }
+
     // --- DeleteMod ---
 
     [Fact]

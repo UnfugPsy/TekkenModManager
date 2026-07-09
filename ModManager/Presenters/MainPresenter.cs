@@ -251,10 +251,12 @@ namespace ModManager.Presenters
             }
         }
         
-        private void ExtractArchive(string archivePath, string extractPath)
+        public static void ExtractArchive(string archivePath, string extractPath)
         {
+            Directory.CreateDirectory(extractPath);
+
             string fileExtension = Path.GetExtension(archivePath).ToLower();
-            
+
             if (fileExtension == ".zip")
             {
                 ZipFile.ExtractToDirectory(archivePath, extractPath);

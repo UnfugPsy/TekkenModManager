@@ -21,31 +21,65 @@ namespace ModManager.Models
 
     public void SetGameLocation()
     {
-      OpenFileDialog openFileDialog = new()
+      FolderBrowserDialog folderBrowserDialog = new()
       {
-        Title = "Select TEKKEN 8's Paks directory (or a file inside it)",
-        Filter = "TEKKEN 8 Pak Files|*.pak|All Files (*.*)|*.*"
+        Description = "Select TEKKEN 8's 'Paks' (or 'Mods') directory",
+        UseDescriptionForTitle = true,
+        ShowNewFolderButton = false
       };
 
-      if (openFileDialog.ShowDialog() == DialogResult.OK)
+      if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
       {
-        string paksDirectory = Path.GetDirectoryName(openFileDialog.FileName);
-
-        if (paksDirectory != null && paksDirectory.EndsWith("Paks", StringComparison.OrdinalIgnoreCase))
-        {
-          string modsDirectory = Path.Combine(paksDirectory, "Mods");
-          Directory.CreateDirectory(modsDirectory);
-          GameLocation = modsDirectory;
-          Settings.Default.GameLocationPath = modsDirectory;
-          Settings.Default.Save();
-
-          MessageBox.Show($"Mods directory set to: {GameLocation}");
-        }
-        else
-        {
-          MessageBox.Show("Please select a file from within the 'Paks' directory.");
-        }
+        return;
       }
+
+      string? modsDirectory = ResolveModsDirectory(folderBrowserDialog.SelectedPath);
+
+      if (modsDirectory == null)
+      {
+        MessageBox.Show("Please select TEKKEN 8's 'Paks' or 'Mods' directory.");
+        return;
+      }
+
+      Directory.CreateDirectory(modsDirectory);
+      GameLocation = modsDirectory;
+      Settings.Default.GameLocationPath = modsDirectory;
+      Settings.Default.Save();
+
+      MessageBox.Show($"Mods directory set to: {GameLocation}");
+    }
+
+    public static string? ResolveModsDirectory(string? selectedPath)
+    {
+      if (string.IsNullOrWhiteSpace(selectedPath))
+      {
+        return null;
+      }
+
+      string trimmed = selectedPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+      string folderName = Path.GetFileName(trimmed);
+
+      if (string.Equals(folderName, "Mods", StringComparison.OrdinalIgnoreCase))
+      {
+        return trimmed;
+      }
+
+      if (string.Equals(folderName, "Paks", StringComparison.OrdinalIgnoreCase))
+      {
+        return Path.Combine(trimmed, "Mods");
+      }
+
+      if (Directory.Exists(Path.Combine(trimmed, "Paks")))
+      {
+        return Path.Combine(trimmed, "Paks", "Mods");
+      }
+
+      if (Directory.Exists(Path.Combine(trimmed, "Mods")))
+      {
+        return Path.Combine(trimmed, "Mods");
+      }
+
+      return null;
     }
   }
 }
