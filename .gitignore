@@ -57,13 +57,5 @@ artifacts/
 Thumbs.db
 desktop.ini
 
-## Internal project docs (not for the public repository)
-instructions.md
-**/instructions.md
-*.instructions.md
-.github/copilot-instructions.md
-AGENTS.md
-**/AGENTS.md
-
 ## Keep the public README visible
 !README.md

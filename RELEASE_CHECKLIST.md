@@ -30,7 +30,7 @@ In `ModManager\ModManager.csproj`:
   - If you added a keyboard shortcut, also update the highlight check in `ModManager\Utils\HelpFormUtils.cs` and the bottom label in `ModManager\Form1.Designer.cs`.
 
 ## 5. Publish both builds
-Run from the repo root (`F:\VS Projekts\ModManager\ModManager`).
+Run from the repo root (`K:\AI_Workspace\Repositories\ModManager\ModManager`).
 
 Self-contained (no runtime needed, ~63 MB):
 ```
