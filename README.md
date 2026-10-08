@@ -30,12 +30,10 @@ A lightweight Windows desktop app for installing, enabling, and organizing **TEK
 
 Download the latest release from the [Releases](../../releases) page. Two builds are available — pick one:
 
-> ⚠️ **Experimental build.** This 1.1.0-experimental release introduces multi-root support (Mods / ~mods / LogicMods) and real-time folder watching. It is provided for testing — please back up your mods before use and report any issues.
-
 | Build | Download | .NET required? | Size |
 |-------|----------|----------------|------|
-| **Self-contained** (recommended) | `TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip` | No — everything is bundled | ~63 MB |
-| **Framework-dependent** | `TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip` | Yes — [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) | ~1 MB |
+| **Self-contained** (recommended) | `TekkenModManager-1.1.1-win-x64-selfcontained.zip` | No — everything is bundled | ~63 MB |
+| **Framework-dependent** | `TekkenModManager-1.1.1-win-x64-framework-dependent.zip` | Yes — [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) | ~1 MB |
 
 **To install:** extract the ZIP to any folder and run `ModManager.exe`. No setup or admin rights needed.
 

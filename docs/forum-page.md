@@ -12,12 +12,12 @@
 
 Pick **one** of the two builds, extract it anywhere and run **ModManager.exe**.
 
-> ⚠️ **1.1.0-experimental.** Adds multi-root support (Mods / ~mods / LogicMods) and real-time folder watching. Back up your mods first and report anything that misbehaves, here or on [GitHub](https://github.com/UnfugPsy/TekkenModManager/issues).
+> **1.1.1** fixes the "executable not found" error on *Start TEKKEN 8*, makes conflict warnings see nested paks, makes enabling or disabling a mod all-or-none, and asks before every delete. Back up your mods before you update, and report anything that misbehaves, here or on [GitHub](https://github.com/UnfugPsy/TekkenModManager/issues).
 
 | Build | File | Size | Needs |
 |:---|:---|:---|:---|
-| **Recommended: self-contained** | `TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip` | 63 MB | nothing |
-| Smaller: framework-dependent | `TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip` | 1 MB | [.NET 8 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/8.0) |
+| **Recommended: self-contained** | `TekkenModManager-1.1.1-win-x64-selfcontained.zip` | 63 MB | nothing |
+| Smaller: framework-dependent | `TekkenModManager-1.1.1-win-x64-framework-dependent.zip` | 1 MB | [.NET 8 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/8.0) |
 
 **Windows says "Windows protected your PC"?** The exe is not code-signed, so SmartScreen warns about every new unsigned download. Click *More info*, then *Run anyway*. You can check what you downloaded: the SHA-256 of each zip is listed under [Verify your download](#verify-your-download), and the complete source code is on GitHub, so you can read it or build it yourself.
 
@@ -95,7 +95,7 @@ No. Enabling and disabling only renames files and can be undone. The only things
 If it still happens, write the mod's name and which folder it is in as a comment and I will look at it.
 
 **"TEKKEN 8 executable not found" when I press Start TEKKEN 8.**
-Fixed in the release after 1.1.0-experimental. On 1.1.0-experimental the button looks for the game one folder too high; start the game from Steam instead, or update.
+Fixed in 1.1.1. On 1.1.0-experimental the button looks for the game one folder too high; start the game from Steam instead, or update.
 
 **Can I set which mod wins when two overlap?**
 Not yet. The manager only warns about overlaps. It has been requested.
@@ -116,11 +116,11 @@ Here in the comments, or as an issue on [GitHub](https://github.com/UnfugPsy/Tek
 
 ## Verify your download
 
-SHA-256 of the 1.1.0-experimental zips:
+SHA-256 of the 1.1.1 zips:
 
 ```
-83e354fee8912640c897d6f288b69886e3f20abd3dc9652eb822e6ccfeb0e060  TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip
-46b884aa12abeed0e37ad6519e7dc03f40f54de098e10914f7187b9d3cc33e45  TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip
+dd79759a4fa2074179503e683c0ec82fba25b77781f93690fe17db8ae79c9922  TekkenModManager-1.1.1-win-x64-framework-dependent.zip
+9c652be019ef663fcda9347cf99bf04710396fb27bee789af50b4de5dd631a74  TekkenModManager-1.1.1-win-x64-selfcontained.zip
 ```
 
 In PowerShell: `Get-FileHash <file> -Algorithm SHA256`.
@@ -134,6 +134,7 @@ In PowerShell: `Get-FileHash <file> -Algorithm SHA256`.
 - 1.0.2: Fix mods that stay inactive and cannot be toggled when their .pak/.ucas/.utoc files live in a nested subfolder (e.g. Content/Paks)
 - 1.0.3: Rename a mod's folder from the list (right-click > Rename, or F2); profile references update automatically
 - 1.1.0-experimental: All three mod folders (Mods, ~mods, LogicMods) in one list with a TYPE column; auto-detect the target folder when adding a mod; logic (UE4SS script) mods enable and disable via folder renaming; real-time folder watching; existing setups migrate automatically
+- 1.1.1: Fix "TEKKEN 8 executable not found" on Start TEKKEN 8; ask before every delete (also the right-click one); enabling or disabling a mod is all-or-none, so a locked file cannot leave it half-switched; conflict warnings also compare paks in nested folders; the installer's scratch folder no longer shows up as a mod; faster refresh. No longer marked experimental
 
 Full history: [CHANGELOG](https://github.com/UnfugPsy/TekkenModManager/blob/main/CHANGELOG.md).
 

@@ -4,6 +4,9 @@ One entry per release, newest first. The release script reads the section whose 
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-08
+
+- No longer marked experimental: the multi-root support from 1.1.0 has run for twelve weeks without a bug report against it
 - Fix "TEKKEN 8 executable not found" when pressing Start TEKKEN 8 (reported on the TekkenMods page): the game folder is now found by climbing to the `Polaris` folder
 - Ask for confirmation before every delete, including the right-click "Delete Mod" (a delete is permanent, not to the Recycle Bin)
 - Enabling or disabling a mod is all-or-none: if one file cannot be renamed, the others are put back instead of leaving the mod half-switched

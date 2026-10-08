@@ -12,13 +12,27 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Skip when the release already exists
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view $env:GITHUB_REF_NAME *> $null
+          if ($LASTEXITCODE -eq 0) {
+            "SKIP=true" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+            Write-Host "release $env:GITHUB_REF_NAME already exists; leaving the published files as they are"
+          }
+          $global:LASTEXITCODE = 0
       - uses: actions/setup-dotnet@v4
+        if: env.SKIP != 'true'
         with:
           global-json-file: global.json
       - name: Build zips
+        if: env.SKIP != 'true'
         shell: pwsh
         run: ./scripts/release.ps1
       - name: Check the tag matches the version
+        if: env.SKIP != 'true'
         shell: pwsh
         run: |
           $zip = Get-ChildItem artifacts/release -Filter '*selfcontained.zip' | Select-Object -First 1
@@ -27,6 +41,7 @@ jobs:
             throw "tag $env:GITHUB_REF_NAME does not match version v$version in Directory.Build.props"
           }
       - name: Create the GitHub release
+        if: env.SKIP != 'true'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}

@@ -8,7 +8,7 @@ Last read: 2026-10-08.
 
 | Comment | Kind | What | Status |
 |:---|:---|:---|:---|
-| #38340 | bug | "Start TEKKEN 8" says the executable is not found when the game location is the Paks folder | fixed in `1076fc7` (the game folder was computed one level too high since 1.1.0); in the next release, then reply with the version |
+| #38340 | bug | "Start TEKKEN 8" says the executable is not found when the game location is the Paks folder | fixed in `1076fc7` (the game folder was computed one level too high since 1.1.0); released in 1.1.1; reply to the reporter naming the version |
 | #38159 | bug? | Disabling a mod in the manager leaves it active in the game | open: cause unknown, needs the reporter's mod layout |
 | #37873 | feature | Priority between overlapping mods | open, not started |
 | #38843 | feature | Support a mod that replaces loose files under `Polaris\Content\Movies\usm\StageSelect`, outside `Paks` | open, not started |
