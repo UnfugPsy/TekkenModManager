@@ -1,135 +1,148 @@
 # TEKKEN 8 Mod Manager
 
-**A lightweight Windows app for installing, toggling, and organizing your TEKKEN 8 mods.**
+**Install, switch on and off, and organise your TEKKEN 8 mods without touching a single file name.**
 
 ![MainWindowWithMods](https://dist.tekkenmods.com/dist-cache/1920/80945/media/1a73613752e70248394a8a64b3e8577d-802x584.png)
+
+**In 30 seconds:** download one zip, unzip it anywhere, run `ModManager.exe`, point it at your TEKKEN 8 `Paks` folder. Every mod gets an ACTIVE checkbox. Free, no installer, no admin rights, open source ([GitHub](https://github.com/UnfugPsy/TekkenModManager)).
+
+---
+
+## Download
+
+Pick **one** of the two builds, extract it anywhere and run **ModManager.exe**.
+
+> ⚠️ **1.1.0-experimental.** Adds multi-root support (Mods / ~mods / LogicMods) and real-time folder watching. Back up your mods first and report anything that misbehaves, here or on [GitHub](https://github.com/UnfugPsy/TekkenModManager/issues).
+
+| Build | File | Size | Needs |
+|:---|:---|:---|:---|
+| **Recommended: self-contained** | `TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip` | 63 MB | nothing |
+| Smaller: framework-dependent | `TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip` | 1 MB | [.NET 8 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/8.0) |
+
+**Windows says "Windows protected your PC"?** The exe is not code-signed, so SmartScreen warns about every new unsigned download. Click *More info*, then *Run anyway*. You can check what you downloaded: the SHA-256 of each zip is listed under [Verify your download](#verify-your-download), and the complete source code is on GitHub, so you can read it or build it yourself.
 
 ---
 
 ## Why you'll like it
 
-**One-click on/off — no manual file renaming**
-Every mod has an ACTIVE checkbox. Tick it to enable, untick to disable. The app renames the mod files in place for you (pak / ucas / utoc), so you never have to dig through folders or rename anything by hand.
+**One-click on/off, no manual file renaming**
+Tick ACTIVE to enable, untick to disable. The app renames the mod's files in place (pak / ucas / utoc), so you never dig through folders. Nothing is deleted when you toggle, and it is fully reversible.
 
-**Install straight from ZIP, RAR, or 7Z**
-Add a mod with the button or just **drag and drop the archive onto the window**. It extracts and installs in the right place automatically.
+**All three mod folders in one list**
+`Mods`, `~mods` and `LogicMods` (UE4SS script mods) show up together, with a TYPE column that says which folder each mod lives in.
 
-**Profiles — swap whole mod loadouts in seconds**
-Save a set of enabled mods as a profile, then switch between them instantly. Great for keeping a "tournament-legal" set, a "fun/chaos" set, and a "screenshot/photo-mode" set side by side.
+**Install straight from ZIP, RAR or 7Z**
+Click *Add Zipped Mod* or drop the archive onto the window. The manager looks inside the archive, suggests the right folder, and lets you confirm it.
 
-**Conflict detection that actually warns you**
-If two mods ship the same pak file, they'll fight over the same slot. The manager flags these conflicts up front so you know exactly which mods override each other — no more silent breakage.
+**Profiles: swap whole loadouts in seconds**
+Keep a "tournament-legal" set, a "fun/chaos" set and a "photo-mode" set side by side, and switch between them in one click.
 
-**Editable metadata for every mod**
-Add a version, category, author, and description to each mod (right-click a mod, or double-click it). Keeps a big collection tidy and searchable.
+**Conflict warnings that actually warn you**
+If two active mods ship the same `.pak` file, they fight over the same slot. The manager flags them in orange, shows a banner with the count, and asks before it launches the game.
+
+**Metadata, rename, search**
+Give each mod a version, category, author and description (right-click, or double-click). Rename a mod's folder with `F2`. Search the list by name, category, author or type.
+
+**Live folder watching**
+Add, remove or rename a mod folder in Windows Explorer and the list updates by itself.
 
 ![EditMetaData](https://dist.tekkenmods.com/dist-cache/1920/80945/media/70e75e3762eb29fc187f6a07bbb4e3b6-770x572.png)
-
-**Instant search**
-Filter your whole list by name, category, or author as you type.
-
-**Pick your game folder the easy way**
-Setting your game location opens a simple folder browser — just select your Paks (or Mods) folder and click OK.
-
----
-
-## Features at a glance
-
-- One-click enable/disable via the ACTIVE checkbox (auto file renaming)
-- Supports all three mod folders — Mods, ~mods, and LogicMods (UE4SS script mods)
-- Install from ZIP / RAR / 7Z — button or drag and drop, with automatic folder detection
-- Profiles — save and apply sets of enabled mods, with a default profile
-- Conflict detection for mods sharing the same pak name
-- Editable metadata — version, category, author, description per mod
-- Rename a mod's folder right from the list (F2)
-- Search by name, category, author, or type
-- Handy keyboard shortcuts
-- Clean, modern Windows interface
-
----
-
-## Keyboard shortcuts
-
-- **F1** — Show help dialog
-- **F2** — Rename the selected mod
-- **F5** — Refresh mod list
-- **Ctrl + G** — Set game location
-- **Ctrl + O** — Open mod folder
-- **Ctrl + N** — Add new mod from archive
-- **Esc** — Close dialogs
-
----
-
-## Download & install
-
-Grab the latest release, pick **one** of the two builds, extract it anywhere, and run **ModManager.exe**. No setup and no admin rights needed.
-
-> ⚠️ **Experimental build** — 1.1.0-experimental adds multi-root support (Mods / ~mods / LogicMods) and real-time folder watching. It's provided for testing; please back up your mods first and report anything that misbehaves.
-
-**Recommended — Self-contained** (about 63 MB)
-Everything is bundled. Nothing extra to install. Just unzip and run.
-File: **TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip**
-
-**Smaller — Framework-dependent** (about 1 MB)
-Tiny download, but it needs the **.NET 8 Desktop Runtime (x64)** installed on your PC.
-File: **TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip**
-Get the runtime here: https://dotnet.microsoft.com/download/dotnet/8.0
-
-> If you use the smaller build and the app won't open, install the **.NET 8 Desktop Runtime (x64)** from the link above and try again.
 
 ---
 
 ## Getting started
 
-1. **Set your game location** — click Set Game Location (Ctrl + G) and pick your TEKKEN 8 Paks folder (typically TEKKEN8 \ Polaris \ Content \ Paks). The Mods, ~mods, and LogicMods folders are used automatically if they exist.
-2. **Add a mod** — click Add Zipped Mod (Ctrl + N), or drag a ZIP / RAR / 7Z onto the window. The manager detects whether it's a standard, legacy, or logic mod and lets you confirm the destination folder.
-3. **Enable or disable** — tick the ACTIVE checkbox; the STATUS column shows ACTIVE or INACTIVE.
+1. **Set your game location.** Click *Set Game Location* (`Ctrl+G`) and pick your TEKKEN 8 `Paks` folder, typically `TEKKEN 8 \ Polaris \ Content \ Paks`. The `Mods`, `~mods` and `LogicMods` folders inside it are used automatically.
+2. **Add a mod.** Click *Add Zipped Mod* (`Ctrl+N`) or drag a ZIP / RAR / 7Z onto the window, then confirm the folder.
+3. **Switch it on.** Tick ACTIVE. The STATUS column reads ACTIVE or INACTIVE.
 
 ![](https://dist.tekkenmods.com/dist-cache/1920/80945/media/3ef5b6328d01a4d75c4356ccff37a246-628x430.png)
+
+### Keyboard shortcuts
+
+`F1` help · `F2` rename the selected mod · `F5` refresh · `Ctrl+G` set game location · `Ctrl+O` open the mod folder · `Ctrl+N` add a mod · `Esc` close dialogs
+
+---
+
+## What it touches on your PC
+
+So there are no surprises:
+
+- **Pak mods (Mods, ~mods):** it appends `-x` to the mod's `.pak`, `.ucas`, `.utoc`, `.sig` and `.txt` files to disable it, and removes the `-x` to enable it.
+- **Logic mods (LogicMods):** it renames the mod's folder with a `.disabled_` prefix to disable it; the files inside are not touched.
+- **Metadata:** a small `modinfo.json` inside the mod's own folder.
+- **Profiles:** `%LOCALAPPDATA%\TekkenModManager\profiles.json`.
+- **Deleting:** the trash button and the right-click *Delete Mod* remove the mod's folder permanently; it does not go to the Recycle Bin.
+- It only looks at the three folders under `Paks`. Anything else, including loose files elsewhere in the game folder, is not managed.
+
+To uninstall, delete the folder you extracted it to (and `%LOCALAPPDATA%\TekkenModManager` if you want to remove your profiles). Your mods stay where they are.
 
 ---
 
 ## FAQ
 
-**I already have mods installed but don't have the ZIPs anymore. Do I have to re-download them all?**
-Nope. Just open your Paks / Mods folder and create one folder per mod, then copy the **full mod** into its own folder. The manager picks them up automatically — it works on a folder basis, one folder per mod. Heads up: if you mix files from different mods into the same folder, the manager treats it as a single mod and won't separate them, so keep each mod in its own folder.
+**I already have mods installed but no longer have the ZIPs. Do I have to download them again?**
+No. Create one folder per mod inside `Mods` (or `~mods`, `LogicMods`) and copy each mod's full contents into its own folder. The manager works per folder. If you mix files from different mods in one folder, it treats them as a single mod.
 
 **Will it delete or break my existing mods?**
-No. Enabling and disabling just renames the mod files in place (it adds a marker to disable, removes it to enable). Nothing is deleted when you toggle, and it's fully reversible.
+No. Enabling and disabling only renames files and can be undone. The only things that delete are the trash button and the right-click *Delete Mod*, and those are permanent.
 
-**How do I turn a mod off without removing it?**
-Untick its ACTIVE checkbox. The mod stays on your drive and in the list — it's just inactive until you tick it again.
+**I disabled a mod but it still seems active in the game. What should I check?**
+1. Its STATUS must read INACTIVE after you untick it.
+2. Is there an orange conflict banner? Another active mod may ship the same file.
+3. Close the game completely before toggling mods. The game reads its mods when it starts.
+4. Is a second copy of the mod lying loose in `Paks`, outside the three folders? The manager does not see those.
+If it still happens, write the mod's name and which folder it is in as a comment and I will look at it.
 
-**Where does it keep my mods?**
-In your game's Paks / Mods folder (it creates the Mods folder for you if it isn't there). Each mod lives in its own subfolder.
+**"TEKKEN 8 executable not found" when I press Start TEKKEN 8.**
+Known bug in 1.1.0-experimental: the button looks for the game one folder too high when your game location is the `Paks` folder. Start the game from Steam as usual for now; a fix is on the way. *(Remove this entry once the fix is released.)*
 
-**Can I still install mods manually while using this?**
-Yes. Manual folders and archive installs live happily side by side — drop a folder in yourself or use Add Zipped Mod, whichever you prefer.
+**Can I set which mod wins when two overlap?**
+Not yet. The manager only warns about overlaps. It has been requested.
 
-**The app won't open.**
-If you grabbed the smaller framework-dependent build, install the **.NET 8 Desktop Runtime (x64)** and try again. The self-contained build needs nothing extra.
+**Can it manage mods that live outside `Paks` (for example movie or stage-select replacements under `Content\Movies`)?**
+Not yet. It manages `Mods`, `~mods` and `LogicMods` only. It has been requested.
+
+**Can I still install mods by hand?**
+Yes. Manual folders and archive installs live side by side. Drop a folder in yourself or use *Add Zipped Mod*.
+
+**The app will not open.**
+If you took the small framework-dependent build, install the .NET 8 Desktop Runtime (x64) from the link above. The self-contained build needs nothing.
+
+**Where do I report a bug or ask for a feature?**
+Here in the comments, or as an issue on [GitHub](https://github.com/UnfugPsy/TekkenModManager/issues). Please say which version you use (`F1` shows it) and which game location you set.
 
 ---
 
-## Requirements
+## Verify your download
 
-- Windows
-- TEKKEN 8 (PC)
+SHA-256 of the 1.1.0-experimental zips:
+
+```
+83e354fee8912640c897d6f288b69886e3f20abd3dc9652eb822e6ccfeb0e060  TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip
+46b884aa12abeed0e37ad6519e7dc03f40f54de098e10914f7187b9d3cc33e45  TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip
+```
+
+In PowerShell: `Get-FileHash <file> -Algorithm SHA256`.
 
 ---
 
 ## Versions
 
 - 1.0.0: Initial release
-- 1.0.1: Fix "Directory does not exist to extract to" when adding .rar/.7z mods (create destination directory before extraction in ExtractArchive)
-- 1.0.2: Fix mods that stay inactive and can't be toggled when their .pak/.ucas/.utoc files live in a nested subfolder (e.g. Content/Paks)
-- 1.0.3: Add the ability to rename a mod's folder from the list (right-click > Rename, or press F2); profile references update automatically
-- 1.1.0-experimental: Support all three mod folders (Mods, ~mods, LogicMods) in one list with a new TYPE column; auto-detect the target folder when adding a mod; logic (UE4SS script) mods now enable/disable correctly via folder renaming; real-time folder watching; existing setups migrate automatically. Experimental — testing feedback welcome
+- 1.0.1: Fix "Directory does not exist to extract to" when adding .rar/.7z mods
+- 1.0.2: Fix mods that stay inactive and cannot be toggled when their .pak/.ucas/.utoc files live in a nested subfolder (e.g. Content/Paks)
+- 1.0.3: Rename a mod's folder from the list (right-click > Rename, or F2); profile references update automatically
+- 1.1.0-experimental: All three mod folders (Mods, ~mods, LogicMods) in one list with a TYPE column; auto-detect the target folder when adding a mod; logic (UE4SS script) mods enable and disable via folder renaming; real-time folder watching; existing setups migrate automatically
+
+Full history: [CHANGELOG](https://github.com/UnfugPsy/TekkenModManager/blob/main/CHANGELOG.md).
 
 ---
 
+## Requirements
+
+Windows and TEKKEN 8 (PC).
+
 ## Disclaimer
 
-This is a free community tool and is **not affiliated with Bandai Namco**. Use mods at your own risk.
-
-I might continue but this is it for now.
+A free community tool, **not affiliated with Bandai Namco**. Use mods at your own risk. MIT licensed, source on [GitHub](https://github.com/UnfugPsy/TekkenModManager).
