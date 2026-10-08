@@ -10,7 +10,14 @@ namespace ModManager.Models
         public string Version { get; set; } = "1.0";
         public string Category { get; set; } = "Misc";
         public string Description { get; set; } = "";
-        public long Size { get; set; }
+        private long? _size;
+
+        /// <summary>The folder's total size, measured on first read so scans that never show it do not walk the tree.</summary>
+        public long Size
+        {
+            get => _size ??= MeasureSize();
+            set => _size = value;
+        }
         public DateTime DateAdded { get; set; } = DateTime.Now;
         public string Author { get; set; } = "Unknown";
         public string ThumbnailPath { get; set; } = "";
@@ -35,20 +42,29 @@ namespace ModManager.Models
             IsEnabled = enabled;
             RootKind = rootKind;
             RootPath = rootPath;
+        }
 
-            if (Directory.Exists(path))
+        private long MeasureSize()
+        {
+            if (!Directory.Exists(Path))
             {
-                try
-                {
-                    Size = CalculateDirectorySize(path);
-                }
-                catch
-                {
-                    Size = 0;
-                }
+                return 0;
+            }
+
+            try
+            {
+                return CalculateDirectorySize(Path);
+            }
+            catch (IOException)
+            {
+                return 0;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return 0;
             }
         }
-        
+
         private static long CalculateDirectorySize(string directoryPath)
         {
             var dirInfo = new DirectoryInfo(directoryPath);
