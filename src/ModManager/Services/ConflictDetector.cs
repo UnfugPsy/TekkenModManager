@@ -15,10 +15,13 @@ namespace ModManager.Services
                 if (!Directory.Exists(mod.Path))
                     continue;
 
-                foreach (var file in Directory.GetFiles(mod.Path, "*.pak", SearchOption.TopDirectoryOnly)
-                    .Where(f => !f.EndsWith(".pak-x", StringComparison.OrdinalIgnoreCase)))
+                var pakNames = Directory.GetFiles(mod.Path, "*.pak", SearchOption.AllDirectories)
+                    .Where(f => !f.EndsWith(".pak-x", StringComparison.OrdinalIgnoreCase))
+                    .Select(f => Path.GetFileName(f))
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+
+                foreach (var fileName in pakNames)
                 {
-                    string fileName = Path.GetFileName(file);
                     if (!fileToMods.TryGetValue(fileName, out var owners))
                     {
                         owners = new List<string>();

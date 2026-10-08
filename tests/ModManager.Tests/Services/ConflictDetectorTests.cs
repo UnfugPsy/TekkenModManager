@@ -104,4 +104,33 @@ public class ConflictDetectorTests : IDisposable
         Assert.Contains("mod_b", result);
         Assert.DoesNotContain("mod_c", result);
     }
+
+    [Fact]
+    public void NestedPaks_AreComparedToo()
+    {
+        var nested = MakeEnabledMod("mod_nested");
+        string deep = Path.Combine(nested.Path, "Content", "Paks");
+        Directory.CreateDirectory(deep);
+        File.WriteAllText(Path.Combine(deep, "common.pak"), "data");
+
+        var mods = new List<ModInfo> { nested, MakeEnabledMod("mod_flat", "common.pak") };
+
+        var result = ConflictDetector.FindConflictingModNames(mods);
+
+        Assert.Contains("mod_nested", result);
+        Assert.Contains("mod_flat", result);
+    }
+
+    [Fact]
+    public void ASamePakNameTwiceInsideOneMod_IsNotAConflictWithItself()
+    {
+        var mod = MakeEnabledMod("mod_a", "common.pak");
+        string sub = Path.Combine(mod.Path, "alt");
+        Directory.CreateDirectory(sub);
+        File.WriteAllText(Path.Combine(sub, "common.pak"), "data");
+
+        var result = ConflictDetector.FindConflictingModNames(new List<ModInfo> { mod });
+
+        Assert.Empty(result);
+    }
 }
