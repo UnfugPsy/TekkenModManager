@@ -12,14 +12,15 @@
 
 Pick **one** of the two builds, extract it anywhere and run **ModManager.exe**.
 
-> **1.1.1** fixes the "executable not found" error on *Start TEKKEN 8*, makes conflict warnings see nested paks, makes enabling or disabling a mod all-or-none, and asks before every delete. Back up your mods before you update, and report anything that misbehaves, here or on [GitHub](https://github.com/UnfugPsy/TekkenModManager/issues).
+**New in 1.1.1:** fixes the "executable not found" error on *Start TEKKEN 8*, makes conflict warnings see nested paks, makes enabling or disabling a mod all-or-none, and asks before every delete. Back up your mods before you update, and report anything that misbehaves, here or on [GitHub](https://github.com/UnfugPsy/TekkenModManager/issues).
 
-| Build | File | Size | Needs |
-|:---|:---|:---|:---|
-| **Recommended: self-contained** | `TekkenModManager-1.1.1-win-x64-selfcontained.zip` | 63 MB | nothing |
-| Smaller: framework-dependent | `TekkenModManager-1.1.1-win-x64-framework-dependent.zip` | 1 MB | [.NET 8 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/8.0) |
+**Recommended: self-contained** (63 MB, needs nothing)
+`TekkenModManager-1.1.1-win-x64-selfcontained.zip`
 
-**Windows says "Windows protected your PC"?** The exe is not code-signed, so SmartScreen warns about every new unsigned download. Click *More info*, then *Run anyway*. You can check what you downloaded: the SHA-256 of each zip is listed under [Verify your download](#verify-your-download), and the complete source code is on GitHub, so you can read it or build it yourself.
+**Smaller: framework-dependent** (1 MB, needs the [.NET 8 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/8.0))
+`TekkenModManager-1.1.1-win-x64-framework-dependent.zip`
+
+**Windows says "Windows protected your PC"?** The exe is not code-signed, so SmartScreen warns about every new unsigned download. Click *More info*, then *Run anyway*. You can check what you downloaded: the SHA-256 of each zip is listed under "Verify your download" further down, and the complete source code is on GitHub, so you can read it or build it yourself.
 
 ---
 
@@ -118,10 +119,9 @@ Here in the comments, or as an issue on [GitHub](https://github.com/UnfugPsy/Tek
 
 SHA-256 of the 1.1.1 zips:
 
-```
-dd79759a4fa2074179503e683c0ec82fba25b77781f93690fe17db8ae79c9922  TekkenModManager-1.1.1-win-x64-framework-dependent.zip
-9c652be019ef663fcda9347cf99bf04710396fb27bee789af50b4de5dd631a74  TekkenModManager-1.1.1-win-x64-selfcontained.zip
-```
+Self-contained: `9c652be019ef663fcda9347cf99bf04710396fb27bee789af50b4de5dd631a74`
+
+Framework-dependent: `dd79759a4fa2074179503e683c0ec82fba25b77781f93690fe17db8ae79c9922`
 
 In PowerShell: `Get-FileHash <file> -Algorithm SHA256`.
 
