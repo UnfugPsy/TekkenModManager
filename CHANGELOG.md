@@ -4,6 +4,13 @@ One entry per release, newest first. The release script reads the section whose 
 
 ## [Unreleased]
 
+- Fix "TEKKEN 8 executable not found" when pressing Start TEKKEN 8 (reported on the TekkenMods page): the game folder is now found by climbing to the `Polaris` folder
+- Ask for confirmation before every delete, including the right-click "Delete Mod" (a delete is permanent, not to the Recycle Bin)
+- Enabling or disabling a mod is all-or-none: if one file cannot be renamed, the others are put back instead of leaving the mod half-switched
+- Conflict warnings now also compare `.pak` files in nested subfolders
+- The installer's scratch folder no longer shows up as a mod while an archive is extracting
+- Faster refresh: folder sizes are measured when shown, not on every scan
+
 ## [1.1.0-experimental] - 2026-07-12
 
 - Support all three mod folders (Mods, ~mods, LogicMods) in one list with a new TYPE column

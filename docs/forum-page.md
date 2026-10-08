@@ -72,7 +72,7 @@ So there are no surprises:
 - **Logic mods (LogicMods):** it renames the mod's folder with a `.disabled_` prefix to disable it; the files inside are not touched.
 - **Metadata:** a small `modinfo.json` inside the mod's own folder.
 - **Profiles:** `%LOCALAPPDATA%\TekkenModManager\profiles.json`.
-- **Deleting:** the trash button and the right-click *Delete Mod* remove the mod's folder permanently; it does not go to the Recycle Bin.
+- **Deleting:** the trash button and the right-click *Delete Mod* remove the mod's folder permanently, after a confirmation; it does not go to the Recycle Bin.
 - It only looks at the three folders under `Paks`. Anything else, including loose files elsewhere in the game folder, is not managed.
 
 To uninstall, delete the folder you extracted it to (and `%LOCALAPPDATA%\TekkenModManager` if you want to remove your profiles). Your mods stay where they are.
@@ -85,7 +85,7 @@ To uninstall, delete the folder you extracted it to (and `%LOCALAPPDATA%\TekkenM
 No. Create one folder per mod inside `Mods` (or `~mods`, `LogicMods`) and copy each mod's full contents into its own folder. The manager works per folder. If you mix files from different mods in one folder, it treats them as a single mod.
 
 **Will it delete or break my existing mods?**
-No. Enabling and disabling only renames files and can be undone. The only things that delete are the trash button and the right-click *Delete Mod*, and those are permanent.
+No. Enabling and disabling only renames files and can be undone. The only things that delete are the trash button and the right-click *Delete Mod*; both ask first, and a delete is permanent.
 
 **I disabled a mod but it still seems active in the game. What should I check?**
 1. Its STATUS must read INACTIVE after you untick it.
@@ -95,7 +95,7 @@ No. Enabling and disabling only renames files and can be undone. The only things
 If it still happens, write the mod's name and which folder it is in as a comment and I will look at it.
 
 **"TEKKEN 8 executable not found" when I press Start TEKKEN 8.**
-Known bug in 1.1.0-experimental: the button looks for the game one folder too high when your game location is the `Paks` folder. Start the game from Steam as usual for now; a fix is on the way. *(Remove this entry once the fix is released.)*
+Fixed in the release after 1.1.0-experimental. On 1.1.0-experimental the button looks for the game one folder too high; start the game from Steam instead, or update.
 
 **Can I set which mod wins when two overlap?**
 Not yet. The manager only warns about overlaps. It has been requested.
