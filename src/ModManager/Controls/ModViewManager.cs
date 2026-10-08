@@ -165,7 +165,6 @@ namespace ModManager.Controls
             _dataGridView.SelectionChanged += OnDataGridSelectionChanged;
             _dataGridView.CellFormatting += OnDataGridCellFormatting;
             _dataGridView.CurrentCellDirtyStateChanged += OnCurrentCellDirtyStateChanged;
-            _dataGridView.CellClick += OnDataGridCellClick;
             _dataGridView.CellMouseEnter += OnDataGridCellMouseEnter;
             _dataGridView.CellMouseLeave += OnDataGridCellMouseLeave;
             _dataGridView.CellMouseDown += OnDataGridCellMouseDown;
@@ -349,10 +348,6 @@ namespace ModManager.Controls
 
             if (_dataGridView.Rows[e.RowIndex].Tag is ModInfo mod)
                 ModEditRequested?.Invoke(this, new ModEditEventArgs(mod));
-        }
-
-        private void OnDataGridCellClick(object sender, DataGridViewCellEventArgs e)
-        {
         }
 
         private void OnDataGridSelectionChanged(object sender, EventArgs e)

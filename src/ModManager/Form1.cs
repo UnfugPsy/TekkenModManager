@@ -20,7 +20,6 @@ namespace ModManager
     public event EventHandler AddModZipClicked;
     public event EventHandler<ModFileDroppedEventArgs> ModFileDropped;
     public event EventHandler StartGameClicked;
-    public event EventHandler HelpRequested;
     public event EventHandler<ModToggleEventArgs> ModToggled;
     public event EventHandler<ModDeleteEventArgs> ModDeleteRequested;
     public event EventHandler<ModEditEventArgs> ModEditRequested;
@@ -34,7 +33,6 @@ namespace ModManager
     public string GameLocation { get; set; }
 
     private MainPresenter _presenter;
-    private Model _model;
     private List<ModInfo> _mods = new();
 
     private ComboBox _profilesComboBox;
@@ -47,7 +45,6 @@ namespace ModManager
     public Form1()
     {
       InitializeComponent();
-      _model = new Model();
 
       TrySetWindowIcon();
 
@@ -137,7 +134,6 @@ namespace ModManager
     {
       if (e.KeyCode == Keys.F1)
       {
-        HelpRequested?.Invoke(this, EventArgs.Empty);
         ShowHelp();
         e.Handled = true;
         return;
@@ -403,7 +399,6 @@ namespace ModManager
 
     private void btnHelp_Click(object sender, EventArgs e)
     {
-      HelpRequested?.Invoke(this, EventArgs.Empty);
       ShowHelp();
     }
 

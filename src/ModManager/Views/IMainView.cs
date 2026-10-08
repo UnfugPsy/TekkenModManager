@@ -15,7 +15,6 @@ namespace ModManager.Views
         event EventHandler AddModZipClicked;
         event EventHandler<ModFileDroppedEventArgs> ModFileDropped;
         event EventHandler StartGameClicked;
-        event EventHandler HelpRequested;
         event EventHandler<ModToggleEventArgs> ModToggled;
         event EventHandler<ModDeleteEventArgs> ModDeleteRequested;
         event EventHandler<ModEditEventArgs> ModEditRequested;

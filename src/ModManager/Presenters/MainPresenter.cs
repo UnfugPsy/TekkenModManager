@@ -106,7 +106,6 @@ namespace ModManager.Presenters
             _view.AddModZipClicked += OnAddModZipClicked;
             _view.ModFileDropped += OnModFileDropped;
             _view.StartGameClicked += OnStartGameClicked;
-            _view.HelpRequested += OnHelpRequested;
             _view.ModToggled += OnModToggled;
             _view.ModDeleteRequested += OnModDeleteRequested;
             _view.ModEditRequested += OnModEditRequested;
@@ -520,10 +519,6 @@ namespace ModManager.Presenters
             }
 
             return null;
-        }
-
-        private void OnHelpRequested(object sender, EventArgs e)
-        {
         }
 
         private void OnModToggled(object sender, ModToggleEventArgs e)
