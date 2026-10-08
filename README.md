@@ -69,6 +69,10 @@ The last command builds the two release zips into `artifacts/release`; the steps
 
 Bug reports and ideas are welcome as GitHub issues, or as comments on the [TekkenMods page](https://tekkenmods.com/mod/7283/tekken-8-mod-manager). Please include the manager version (F1 shows it) and the game location you set.
 
+## Licence
+
+MIT, see [LICENSE](LICENSE).
+
 ## Disclaimer
 
 This is a community tool and is not affiliated with Bandai Namco. Use mods at your own risk.
