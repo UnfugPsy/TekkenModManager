@@ -112,10 +112,8 @@ namespace ModManager.Services
 
             try
             {
-                foreach (var file in GetDisabledPayloadFiles(modFolderPath))
-                {
-                    File.Move(file, file.Substring(0, file.Length - DisabledFileSuffix.Length));
-                }
+                MoveAllOrNone(GetDisabledPayloadFiles(modFolderPath)
+                    .Select(f => (From: f, To: f.Substring(0, f.Length - DisabledFileSuffix.Length))));
             }
             catch (Exception ex)
             {
@@ -137,10 +135,8 @@ namespace ModManager.Services
 
             try
             {
-                foreach (var file in GetEnabledPayloadFiles(modFolderPath))
-                {
-                    File.Move(file, file + DisabledFileSuffix);
-                }
+                MoveAllOrNone(GetEnabledPayloadFiles(modFolderPath)
+                    .Select(f => (From: f, To: f + DisabledFileSuffix)));
             }
             catch (Exception ex)
             {
@@ -148,6 +144,48 @@ namespace ModManager.Services
             }
 
             return modFolderPath;
+        }
+
+        /// <summary>
+        /// Renames every file in the list, or none: when one rename fails, the ones already done
+        /// are renamed back, so a locked file cannot leave a mod half-enabled.
+        /// </summary>
+        private static void MoveAllOrNone(IEnumerable<(string From, string To)> moves)
+        {
+            var planned = moves.ToList();
+            var done = new List<(string From, string To)>();
+
+            try
+            {
+                foreach (var move in planned)
+                {
+                    File.Move(move.From, move.To);
+                    done.Add(move);
+                }
+            }
+            catch (Exception ex)
+            {
+                var notRestored = new List<string>();
+                for (int i = done.Count - 1; i >= 0; i--)
+                {
+                    try
+                    {
+                        File.Move(done[i].To, done[i].From);
+                    }
+                    catch (Exception undoEx)
+                    {
+                        notRestored.Add($"{done[i].To} ({undoEx.Message})");
+                    }
+                }
+
+                if (notRestored.Count > 0)
+                {
+                    throw new IOException(
+                        $"{ex.Message} Could not restore: {string.Join("; ", notRestored)}", ex);
+                }
+
+                throw;
+            }
         }
 
         /// <summary>
