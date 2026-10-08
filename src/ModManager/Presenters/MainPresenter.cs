@@ -466,11 +466,7 @@ namespace ModManager.Presenters
         
         private void StartGame()
         {
-            string modsDirectory = _model.GameLocation;
-            string? paksDirectory = Path.GetDirectoryName(modsDirectory);
-            string? contentDirectory = paksDirectory is null ? null : Path.GetDirectoryName(paksDirectory);
-            string? polarisDirectory = contentDirectory is null ? null : Path.GetDirectoryName(contentDirectory);
-            string? gameDirectory = polarisDirectory is null ? null : Path.GetDirectoryName(polarisDirectory);
+            string? gameDirectory = ResolveGameDirectory(_model.GameLocation);
 
             if (gameDirectory is null)
             {
@@ -500,6 +496,32 @@ namespace ModManager.Presenters
             }
         }
         
+        /// <summary>
+        /// Finds the game folder (the parent of "Polaris") by climbing from the stored location,
+        /// which is the Paks folder or, for older settings, one of its mod folders.
+        /// </summary>
+        public static string? ResolveGameDirectory(string? gameLocation)
+        {
+            if (string.IsNullOrWhiteSpace(gameLocation))
+            {
+                return null;
+            }
+
+            string? current = gameLocation.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            while (!string.IsNullOrEmpty(current))
+            {
+                if (string.Equals(Path.GetFileName(current), "Polaris", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Path.GetDirectoryName(current);
+                }
+
+                current = Path.GetDirectoryName(current);
+            }
+
+            return null;
+        }
+
         private void OnHelpRequested(object sender, EventArgs e)
         {
         }
