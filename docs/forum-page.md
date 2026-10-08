@@ -123,7 +123,7 @@ Self-contained: `9c652be019ef663fcda9347cf99bf04710396fb27bee789af50b4de5dd631a7
 
 Framework-dependent: `dd79759a4fa2074179503e683c0ec82fba25b77781f93690fe17db8ae79c9922`
 
-In PowerShell: `Get-FileHash <file> -Algorithm SHA256`.
+In PowerShell: `Get-FileHash TekkenModManager-1.1.1-win-x64-selfcontained.zip -Algorithm SHA256` (use the name of the zip you downloaded).
 
 ---
 
