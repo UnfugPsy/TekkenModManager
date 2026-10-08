@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Reflection;
 using System.Windows.Forms;
 using ModManager.Utils;
 
@@ -14,6 +15,12 @@ namespace ModManager.Views
     private Color textColor = Theme.TextPrimary;
     private Color headerColor = Color.FromArgb(220, 220, 255);
     private Panel contentPanel;
+
+    /// <summary>The build's version from Directory.Build.props, without the source-revision suffix.</summary>
+    internal static string AppVersion =>
+      (System.Reflection.Assembly.GetExecutingAssembly()
+        .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()
+        ?.InformationalVersion ?? "unknown").Split('+')[0];
 
     public HelpForm()
     {
@@ -175,7 +182,7 @@ namespace ModManager.Views
 
       yPos = HelpFormUtils.CreateSection(contentPanel, yPos, "ABOUT",
           new string[] {
-                    "TEKKEN 8 Mod Manager v1.1.0-experimental",
+                    $"TEKKEN 8 Mod Manager v{AppVersion}",
                     "A simple tool for managing TEKKEN 8 game modifications",
                     "",
                     "made by Unfug",

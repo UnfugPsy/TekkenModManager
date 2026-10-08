@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Build zips
+        shell: pwsh
+        run: ./scripts/release.ps1
+      - name: Check the tag matches the version
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem artifacts/release -Filter '*selfcontained.zip' | Select-Object -First 1
+          $version = $zip.Name -replace '^TekkenModManager-(.+)-win-x64-selfcontained\.zip$', '$1'
+          if ($env:GITHUB_REF_NAME -ne "v$version") {
+            throw "tag $env:GITHUB_REF_NAME does not match version v$version in Directory.Build.props"
+          }
+      - name: Create the GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $assets = @(Get-ChildItem artifacts/release -Include '*.zip', 'SHA256SUMS.txt' -Recurse | ForEach-Object { $_.FullName })
+          $flags = @()
+          if ($env:GITHUB_REF_NAME -match '-') {
+            $flags += '--prerelease'
+          }
+          gh release create $env:GITHUB_REF_NAME @assets --title $env:GITHUB_REF_NAME --notes-file artifacts/release/notes.md @flags

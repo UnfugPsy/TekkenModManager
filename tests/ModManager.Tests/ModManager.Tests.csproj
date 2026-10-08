@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\ModManager\ModManager.csproj" />
+	<ProjectReference Include="..\..\src\ModManager\ModManager.csproj" />
   </ItemGroup>
 
 </Project>

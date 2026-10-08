@@ -53,6 +53,22 @@ Download the latest release from the [Releases](../../releases) page. Two builds
 - Windows
 - TEKKEN 8 (PC)
 
+## Building from source
+
+Needs the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (`global.json` pins 8.0.425).
+
+```
+dotnet test ModManager.sln
+dotnet run --project src/ModManager/ModManager.csproj
+pwsh scripts/release.ps1
+```
+
+The last command builds the two release zips into `artifacts/release`; the steps around it are in [docs/releasing.md](docs/releasing.md). Changes per version: [CHANGELOG.md](CHANGELOG.md).
+
+## Feedback
+
+Bug reports and ideas are welcome as GitHub issues, or as comments on the [TekkenMods page](https://tekkenmods.com/mod/7283/tekken-8-mod-manager). Please include the manager version (F1 shows it) and the game location you set.
+
 ## Disclaimer
 
 This is a community tool and is not affiliated with Bandai Namco. Use mods at your own risk.

@@ -1,0 +1,14 @@
+name: Feature request
+description: Something the Mod Manager could do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: want
+    attributes:
+      label: What do you want to be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why, and what do you do today instead?

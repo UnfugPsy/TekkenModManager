@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36327.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModManager", "ModManager\ModManager.csproj", "{7081777E-DE5F-4E36-B9AD-247CA53DE260}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModManager", "src\ModManager\ModManager.csproj", "{7081777E-DE5F-4E36-B9AD-247CA53DE260}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModManager.Tests", "ModManager.Tests\ModManager.Tests.csproj", "{2A117DCB-FFE7-4D88-981C-BA8AB01DE69A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModManager.Tests", "tests\ModManager.Tests\ModManager.Tests.csproj", "{2A117DCB-FFE7-4D88-981C-BA8AB01DE69A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
