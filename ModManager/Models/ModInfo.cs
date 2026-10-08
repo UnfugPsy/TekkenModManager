@@ -5,6 +5,8 @@ namespace ModManager.Models
         public string Name { get; }
         public string Path { get; }
         public bool IsEnabled { get; }
+        public ModRootKind RootKind { get; }
+        public string RootPath { get; }
         public string Version { get; set; } = "1.0";
         public string Category { get; set; } = "Misc";
         public string Description { get; set; } = "";
@@ -15,12 +17,25 @@ namespace ModManager.Models
 
         public string FormattedSize => Size > 0 ? FormatFileSize(Size) : "Unknown";
 
+        /// <summary>
+        /// Stable identity that is unique across the three mod roots (e.g. "Logic:FrameDataTool").
+        /// Used by profiles, toggling, delete and rename so same-named mods in different roots don't clash.
+        /// </summary>
+        public string Key => $"{RootKind}:{Name}";
+
         public ModInfo(string name, string path, bool enabled)
+            : this(name, path, enabled, ModRootKind.Standard, System.IO.Path.GetDirectoryName(path) ?? string.Empty)
+        {
+        }
+
+        public ModInfo(string name, string path, bool enabled, ModRootKind rootKind, string rootPath)
         {
             Name = name;
             Path = path;
             IsEnabled = enabled;
-            
+            RootKind = rootKind;
+            RootPath = rootPath;
+
             if (Directory.Exists(path))
             {
                 try

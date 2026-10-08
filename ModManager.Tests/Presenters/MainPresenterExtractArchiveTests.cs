@@ -57,4 +57,33 @@ public class MainPresenterExtractArchiveTests : IDisposable
 
         Assert.True(File.Exists(Path.Combine(extractPath, "test.pak")));
     }
+
+    // --- Name preservation: UE5 relies on leading characters for load priority ---
+
+    [Theory]
+    [InlineData("z_OverrideSkin.pak")]
+    [InlineData("000_HighPriority.pak")]
+    [InlineData("zzz_LastWins.utoc")]
+    [InlineData("001_Interface.ucas")]
+    public void ExtractArchive_PreservesLeadingSequentialPrefixes(string entryName)
+    {
+        string zipPath = CreateZip("priority.zip", entryName);
+        string extractPath = Path.Combine(_root, "priority_out");
+
+        MainPresenter.ExtractArchive(zipPath, extractPath);
+
+        // The exact original filename must survive extraction untouched.
+        Assert.True(File.Exists(Path.Combine(extractPath, entryName)));
+    }
+
+    [Fact]
+    public void ExtractArchive_PreservesNestedPathPrefixes()
+    {
+        string zipPath = CreateZip("nested.zip", "z_Pack/000_first.pak");
+        string extractPath = Path.Combine(_root, "nested_out");
+
+        MainPresenter.ExtractArchive(zipPath, extractPath);
+
+        Assert.True(File.Exists(Path.Combine(extractPath, "z_Pack", "000_first.pak")));
+    }
 }

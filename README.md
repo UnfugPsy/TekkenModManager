@@ -4,12 +4,14 @@ A lightweight Windows desktop app for installing, enabling, and organizing **TEK
 
 ## Features
 
-- **One-click enable/disable** — toggle mods via the ACTIVE checkbox; files are renamed in place (`.pak`/`.ucas`/`.utoc` ⇄ `-x` disabled).
-- **Install from archives** — add mods from ZIP/RAR/7Z via button or drag & drop.
+- **One-click enable/disable** — toggle mods via the ACTIVE checkbox; pak mods rename files in place (`.pak`/`.ucas`/`.utoc` ⇄ `-x` disabled), logic mods rename their folder (`.disabled_` prefix).
+- **All three mod folders** — manage `Mods`, `~mods`, and `LogicMods` (UE4SS script mods) in one list, with a TYPE column showing each mod's folder.
+- **Install from archives** — add mods from ZIP/RAR/7Z via button or drag & drop; the destination folder is auto-detected and confirmable.
 - **Profiles** — save and apply sets of enabled mods, with a default profile.
 - **Editable metadata** — version, category, author, and description per mod (right-click → Edit Metadata, or double-click).
+- **Rename mods** — rename a mod's folder from the list (right-click → Rename Mod, or press `F2`); profile references update automatically.
 - **Conflict detection** — mods sharing a `.pak` filename are flagged so overrides are obvious.
-- **Search** — filter the list by name, category, or author.
+- **Search** — filter the list by name, category, author, or type.
 - **Keyboard shortcuts** — fast access to common actions.
 
 ## Keyboard Shortcuts
@@ -17,6 +19,7 @@ A lightweight Windows desktop app for installing, enabling, and organizing **TEK
 | Shortcut | Action |
 |----------|------------------------|
 | `F1`     | Show help dialog       |
+| `F2`     | Rename selected mod    |
 | `F5`     | Refresh mod list       |
 | `Ctrl+G` | Set game location      |
 | `Ctrl+O` | Open mod folder        |
@@ -27,10 +30,12 @@ A lightweight Windows desktop app for installing, enabling, and organizing **TEK
 
 Download the latest release from the [Releases](../../releases) page. Two builds are available — pick one:
 
+> ⚠️ **Experimental build.** This 1.1.0-experimental release introduces multi-root support (Mods / ~mods / LogicMods) and real-time folder watching. It is provided for testing — please back up your mods before use and report any issues.
+
 | Build | Download | .NET required? | Size |
 |-------|----------|----------------|------|
-| **Self-contained** (recommended) | `TekkenModManager-1.0.2-win-x64-selfcontained.zip` | No — everything is bundled | ~63 MB |
-| **Framework-dependent** | `TekkenModManager-1.0.2-win-x64-framework-dependent.zip` | Yes — [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) | ~1 MB |
+| **Self-contained** (recommended) | `TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip` | No — everything is bundled | ~63 MB |
+| **Framework-dependent** | `TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip` | Yes — [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) | ~1 MB |
 
 **To install:** extract the ZIP to any folder and run `ModManager.exe`. No setup or admin rights needed.
 
@@ -38,8 +43,8 @@ Download the latest release from the [Releases](../../releases) page. Two builds
 
 ## Getting Started
 
-1. **Set Game Location** — click *Set Game Location* (`Ctrl+G`) and browse to `TEKKEN8\Polaris\Content\Paks`. A `Mods` folder is created automatically if needed.
-2. **Add a mod** — click *Add Zipped Mod* (`Ctrl+N`) or drag a ZIP/RAR/7Z onto the window.
+1. **Set Game Location** — click *Set Game Location* (`Ctrl+G`) and browse to `TEKKEN8\Polaris\Content\Paks`. The `Mods`, `~mods`, and `LogicMods` folders are used automatically when present.
+2. **Add a mod** — click *Add Zipped Mod* (`Ctrl+N`) or drag a ZIP/RAR/7Z onto the window; confirm the detected destination folder.
 3. **Enable/Disable** — tick the ACTIVE checkbox; the STATUS column shows ACTIVE/INACTIVE.
 
 

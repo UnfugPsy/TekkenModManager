@@ -70,7 +70,7 @@ namespace ModManager.Utils
 
                 Label lineLabel = new Label();
                 lineLabel.Text = line;
-                lineLabel.Font = title == "KEYBOARD SHORTCUTS" && (line.Contains("F1") || line.Contains("F5") || line.Contains("Ctrl"))
+                lineLabel.Font = title == "KEYBOARD SHORTCUTS" && (line.Contains("F1") || line.Contains("F2") || line.Contains("F5") || line.Contains("Ctrl"))
                     ? MonospaceFont
                     : BodyFont;
                 lineLabel.ForeColor = textColor;

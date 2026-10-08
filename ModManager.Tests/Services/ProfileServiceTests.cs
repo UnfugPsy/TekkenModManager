@@ -183,7 +183,7 @@ public class ProfileServiceTests : IDisposable
 
         var updated = sut.GetProfile(profile.Id)!;
         Assert.Single(updated.EnabledMods);
-        Assert.Equal("mod_a", updated.EnabledMods[0]);
+        Assert.Equal("Standard:mod_a", updated.EnabledMods[0]);
     }
 
     // --- CreateFromCurrentState ---
@@ -201,6 +201,110 @@ public class ProfileServiceTests : IDisposable
         var created = sut.CreateFromCurrentState("Snapshot", "desc", mods);
 
         Assert.Single(created.EnabledMods);
-        Assert.Equal("active", created.EnabledMods[0]);
+        Assert.Equal("Standard:active", created.EnabledMods[0]);
+    }
+
+    // --- RenameModInProfiles ---
+
+    [Fact]
+    public void RenameModInProfiles_UpdatesMatchingEntries()
+    {
+        var sut = NewSut();
+        var profile = sut.GetDefaultProfile()!;
+        sut.UpdateProfileWithCurrentMods(profile.Id, new List<ModInfo>
+        {
+            new ModInfo("old_name", "fake/path", true)
+        });
+
+        sut.RenameModInProfiles(ModRootKind.Standard, "old_name", "new_name");
+
+        var updated = sut.GetProfile(profile.Id)!;
+        Assert.Contains("Standard:new_name", updated.EnabledMods);
+        Assert.DoesNotContain("Standard:old_name", updated.EnabledMods);
+    }
+
+    [Fact]
+    public void RenameModInProfiles_UpdatesAcrossMultipleProfiles()
+    {
+        var sut = NewSut();
+        var p1 = sut.GetDefaultProfile()!;
+        sut.UpdateProfileWithCurrentMods(p1.Id, new List<ModInfo> { new ModInfo("shared", "p", true) });
+        var p2 = sut.CreateFromCurrentState("Second", "desc", new List<ModInfo> { new ModInfo("shared", "p", true) });
+
+        sut.RenameModInProfiles(ModRootKind.Standard, "shared", "renamed");
+
+        Assert.Contains("Standard:renamed", sut.GetProfile(p1.Id)!.EnabledMods);
+        Assert.Contains("Standard:renamed", sut.GetProfile(p2.Id)!.EnabledMods);
+    }
+
+    [Fact]
+    public void RenameModInProfiles_LeavesNonMatchingEntriesUntouched()
+    {
+        var sut = NewSut();
+        var profile = sut.GetDefaultProfile()!;
+        sut.UpdateProfileWithCurrentMods(profile.Id, new List<ModInfo>
+        {
+            new ModInfo("keep_me", "fake/path", true)
+        });
+
+        sut.RenameModInProfiles(ModRootKind.Standard, "other_mod", "new_name");
+
+        var updated = sut.GetProfile(profile.Id)!;
+        Assert.Contains("Standard:keep_me", updated.EnabledMods);
+        Assert.DoesNotContain("Standard:new_name", updated.EnabledMods);
+    }
+
+    [Fact]
+    public void RenameModInProfiles_Persists()
+    {
+        var sut1 = NewSut();
+        var profile = sut1.GetDefaultProfile()!;
+        sut1.UpdateProfileWithCurrentMods(profile.Id, new List<ModInfo>
+        {
+            new ModInfo("old_name", "fake/path", true)
+        });
+
+        sut1.RenameModInProfiles(ModRootKind.Standard, "old_name", "new_name");
+
+        var sut2 = NewSut();
+        Assert.Contains("Standard:new_name", sut2.GetProfile(profile.Id)!.EnabledMods);
+    }
+
+    // --- Cross-root naming collisions (compound key {RootKind}:{Name}) ---
+
+    [Fact]
+    public void CreateFromCurrentState_SameName_DifferentRoots_StoredSeparately()
+    {
+        var sut = NewSut();
+        var mods = new List<ModInfo>
+        {
+            new ModInfo("Interface", "p/legacy", true, ModRootKind.Legacy, "p"),
+            new ModInfo("Interface", "p/logic", true, ModRootKind.Logic, "p")
+        };
+
+        var created = sut.CreateFromCurrentState("Snapshot", "desc", mods);
+
+        Assert.Equal(2, created.EnabledMods.Count);
+        Assert.Contains("Legacy:Interface", created.EnabledMods);
+        Assert.Contains("Logic:Interface", created.EnabledMods);
+    }
+
+    [Fact]
+    public void RenameModInProfiles_SameName_OnlyAffectsTargetedRoot()
+    {
+        var sut = NewSut();
+        var profile = sut.GetDefaultProfile()!;
+        sut.UpdateProfileWithCurrentMods(profile.Id, new List<ModInfo>
+        {
+            new ModInfo("Interface", "p/legacy", true, ModRootKind.Legacy, "p"),
+            new ModInfo("Interface", "p/logic", true, ModRootKind.Logic, "p")
+        });
+
+        sut.RenameModInProfiles(ModRootKind.Logic, "Interface", "InterfaceRenamed");
+
+        var updated = sut.GetProfile(profile.Id)!;
+        Assert.Contains("Legacy:Interface", updated.EnabledMods);
+        Assert.Contains("Logic:InterfaceRenamed", updated.EnabledMods);
+        Assert.DoesNotContain("Logic:Interface", updated.EnabledMods);
     }
 }

@@ -145,6 +145,7 @@ namespace ModManager.Controls
                 new DataGridViewTextBoxColumn { Name = "Status",   HeaderText = "STATUS",   Width = 90,  ReadOnly = true, Resizable = DataGridViewTriState.False, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter, Font = Theme.FontSmallBold } },
                 new DataGridViewTextBoxColumn { Name = "Version",  HeaderText = "VERSION",  Width = 80,  ReadOnly = true, Resizable = DataGridViewTriState.True, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter } },
                 new DataGridViewTextBoxColumn { Name = "Category", HeaderText = "CATEGORY", Width = 110, ReadOnly = true, Resizable = DataGridViewTriState.True },
+                new DataGridViewTextBoxColumn { Name = "Type",     HeaderText = "TYPE",     Width = 90,  ReadOnly = true, Resizable = DataGridViewTriState.True, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleCenter } },
                 new DataGridViewTextBoxColumn { Name = "Size",     HeaderText = "SIZE",     Width = 90,  ReadOnly = true, Resizable = DataGridViewTriState.True, DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight } },
                 new DataGridViewButtonColumn  { Name = "Actions",  HeaderText = "",         Width = 70,  ReadOnly = false, Resizable = DataGridViewTriState.False, Text = "\uD83D\uDDD1", UseColumnTextForButtonValue = true, FlatStyle = FlatStyle.Flat,
                     DefaultCellStyle = new DataGridViewCellStyle
@@ -201,6 +202,7 @@ namespace ModManager.Controls
                 ? _currentMods.ToList()
                 : _currentMods.Where(m => m.Name.Contains(term, StringComparison.OrdinalIgnoreCase)
                                        || m.Category.Contains(term, StringComparison.OrdinalIgnoreCase)
+                                       || ModRoots.DisplayName(m.RootKind).Contains(term, StringComparison.OrdinalIgnoreCase)
                                        || m.Author.Contains(term, StringComparison.OrdinalIgnoreCase)).ToList();
             LoadDataGrid();
         }
@@ -231,6 +233,7 @@ namespace ModManager.Controls
                     row.Cells["Status"].Value   = mod.IsEnabled ? "ACTIVE" : "INACTIVE";
                     row.Cells["Version"].Value  = mod.Version;
                     row.Cells["Category"].Value = mod.Category;
+                    row.Cells["Type"].Value     = ModRoots.DisplayName(mod.RootKind);
                     row.Cells["Size"].Value     = mod.FormattedSize;
                     row.Cells["Name"].ToolTipText = BuildModTooltip(mod);
                     row.Cells["Actions"].ToolTipText = "Delete mod";
@@ -258,8 +261,8 @@ namespace ModManager.Controls
 
             for (int i = 0; i < _filteredMods.Count; i++)
             {
-                if (!string.Equals(_dataGridView.Rows[i].Cells["Name"].Value as string,
-                                    _filteredMods[i].Name, StringComparison.Ordinal))
+                if (!(_dataGridView.Rows[i].Tag is ModInfo existing)
+                    || !string.Equals(existing.Key, _filteredMods[i].Key, StringComparison.Ordinal))
                     return false;
             }
 
@@ -271,6 +274,7 @@ namespace ModManager.Controls
                 row.Cells["Status"].Value   = mod.IsEnabled ? "ACTIVE" : "INACTIVE";
                 row.Cells["Version"].Value  = mod.Version;
                 row.Cells["Category"].Value = mod.Category;
+                row.Cells["Type"].Value     = ModRoots.DisplayName(mod.RootKind);
                 row.Cells["Size"].Value     = mod.FormattedSize;
                 row.Cells["Name"].ToolTipText = BuildModTooltip(mod);
                 row.Tag = mod;
@@ -316,7 +320,7 @@ namespace ModManager.Controls
                     row.Cells["Status"].Value = isEnabled ? "ACTIVE" : "INACTIVE";
                     _dataGridView.InvalidateCell(_dataGridView.Columns["Status"].Index, e.RowIndex);
                     _dataGridView.BeginInvoke(new Action(() =>
-                        ModToggled?.Invoke(this, new ModToggleEventArgs(mod.Name, isEnabled))));
+                        ModToggled?.Invoke(this, new ModToggleEventArgs(mod.Name, isEnabled, mod.Key))));
                 }
             }
         }
@@ -339,7 +343,7 @@ namespace ModManager.Controls
                     MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
-                    ModDeleteRequested?.Invoke(this, new ModDeleteEventArgs(actionMod.Name));
+                    ModDeleteRequested?.Invoke(this, new ModDeleteEventArgs(actionMod.Name, actionMod.Key));
             }
         }
 

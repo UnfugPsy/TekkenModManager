@@ -18,5 +18,6 @@ namespace ModManager.Services
         void ApplyProfile(string id, IModService modService);
         ModProfile CreateFromCurrentState(string name, string description, List<ModInfo> currentMods);
         void UpdateProfileWithCurrentMods(string profileId, List<ModInfo> currentMods);
+        void RenameModInProfiles(ModRootKind rootKind, string oldName, string newName);
     }
 }

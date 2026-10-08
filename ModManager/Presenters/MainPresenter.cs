@@ -17,6 +17,7 @@ namespace ModManager.Presenters
         private readonly IProfileService _profileService;
         private readonly IModMetadataService _metadataService;
         private ModProfile _currentProfile;
+        private ModFileWatcher? _fileWatcher;
 
         public MainPresenter(IMainView view)
         {
@@ -38,6 +39,61 @@ namespace ModManager.Presenters
             {
                 _modService = new ModService(_model.GameLocation);
                 _view.SetGameLocationDisplay(_model.GameLocation);
+                StartFileWatcher(_model.GameLocation);
+            }
+        }
+
+        /// <summary>
+        /// (Re)starts the external-change watcher for the given Paks root. Any previous
+        /// watcher is disposed first so switching game locations never leaks handles.
+        /// </summary>
+        private void StartFileWatcher(string paksRoot)
+        {
+            _fileWatcher?.Dispose();
+            _fileWatcher = null;
+
+            if (string.IsNullOrEmpty(paksRoot) || !Directory.Exists(paksRoot))
+                return;
+
+            try
+            {
+                _fileWatcher = new ModFileWatcher(paksRoot);
+                _fileWatcher.Changed += OnExternalModsChanged;
+                _fileWatcher.Start();
+            }
+            catch
+            {
+                // Watching is a convenience; the manual F5 refresh still works if it fails.
+                _fileWatcher = null;
+            }
+        }
+
+        /// <summary>
+        /// Fired on a background thread when Windows Explorer (or any external tool) mutates
+        /// the mod folders. Triggers the same refresh the F5 key does, asynchronously.
+        /// </summary>
+        private void OnExternalModsChanged(object sender, EventArgs e)
+        {
+            RefreshModsList();
+        }
+
+        /// <summary>
+        /// Runs one of the app's OWN file-system mutations with the watcher muted, so our
+        /// writes under the Paks root don't bounce back as a phantom "external change" (which
+        /// could fire a refresh mid-rename and read a half-toggled mod). If no watcher is
+        /// active the action simply runs. We refresh explicitly after every such operation.
+        /// </summary>
+        private void RunSuppressingWatcher(Action action)
+        {
+            if (_fileWatcher == null)
+            {
+                action();
+                return;
+            }
+
+            using (_fileWatcher.SuppressNotifications())
+            {
+                action();
             }
         }
         
@@ -54,6 +110,7 @@ namespace ModManager.Presenters
             _view.ModToggled += OnModToggled;
             _view.ModDeleteRequested += OnModDeleteRequested;
             _view.ModEditRequested += OnModEditRequested;
+            _view.ModRenameRequested += OnModRenameRequested;
             
             _view.ProfileSelected += OnProfileSelected;
             _view.CreateProfileClicked += OnCreateProfileClicked;
@@ -110,6 +167,7 @@ namespace ModManager.Presenters
                 if (!string.IsNullOrEmpty(_model.GameLocation))
                 {
                     _modService = new ModService(_model.GameLocation);
+                    StartFileWatcher(_model.GameLocation);
                     RefreshModsList();
                 }
             }
@@ -212,8 +270,19 @@ namespace ModManager.Presenters
         private async Task InstallModAsync(string archivePath)
         {
             string archiveName = Path.GetFileNameWithoutExtension(archivePath);
-            string finalPath = Path.Combine(_model.GameLocation, archiveName);
-            string tempPath = Path.Combine(_model.GameLocation, $"_{archiveName}_tmp_{Guid.NewGuid():N}");
+
+            ModRootKind detectedKind = DetectRootKind(ReadArchiveEntryPaths(archivePath));
+            ModRootKind? chosenKind = _view.ShowSelectModRootDialog(archiveName, detectedKind);
+            if (chosenKind == null)
+                return;
+
+            string rootPath = _modService != null
+                ? _modService.GetRootPath(chosenKind.Value)
+                : Path.Combine(_model.GameLocation, ModRoots.FolderName(chosenKind.Value));
+            Directory.CreateDirectory(rootPath);
+
+            string finalPath = Path.Combine(rootPath, archiveName);
+            string tempPath = Path.Combine(rootPath, $"_{archiveName}_tmp_{Guid.NewGuid():N}");
 
             if (Directory.Exists(finalPath))
             {
@@ -231,10 +300,13 @@ namespace ModManager.Presenters
             {
                 await Task.Run(() => ExtractArchive(archivePath, tempPath));
 
-                if (Directory.Exists(finalPath))
-                    Directory.Delete(finalPath, true);
+                RunSuppressingWatcher(() =>
+                {
+                    if (Directory.Exists(finalPath))
+                        Directory.Delete(finalPath, true);
 
-                Directory.Move(tempPath, finalPath);
+                    Directory.Move(tempPath, finalPath);
+                });
 
                 _view.ShowMessage($"Mod '{archiveName}' installed successfully.");
                 RefreshModsList();
@@ -276,7 +348,81 @@ namespace ModManager.Presenters
                 }
             }
         }
-        
+
+        /// <summary>Reads the relative entry paths inside an archive without extracting.</summary>
+        private static List<string> ReadArchiveEntryPaths(string archivePath)
+        {
+            var paths = new List<string>();
+            try
+            {
+                string fileExtension = Path.GetExtension(archivePath).ToLower();
+                if (fileExtension == ".zip")
+                {
+                    using var zip = ZipFile.OpenRead(archivePath);
+                    foreach (var entry in zip.Entries)
+                    {
+                        paths.Add(entry.FullName);
+                    }
+                }
+                else
+                {
+                    using var archive = ArchiveFactory.OpenArchive(archivePath);
+                    foreach (var entry in archive.Entries.Where(e => !e.IsDirectory))
+                    {
+                        if (entry.Key != null)
+                        {
+                            paths.Add(entry.Key);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Detection is best-effort; fall back to Standard when the archive can't be inspected.
+            }
+            return paths;
+        }
+
+        /// <summary>
+        /// Infers the destination mod root from an archive's entry paths.
+        /// Matches an explicit mod-folder segment first, then falls back to a script heuristic.
+        /// </summary>
+        public static ModRootKind DetectRootKind(IEnumerable<string> entryPaths)
+        {
+            bool hasScript = false;
+
+            foreach (var raw in entryPaths)
+            {
+                if (string.IsNullOrEmpty(raw))
+                    continue;
+
+                string normalized = raw.Replace('\\', '/');
+                var segments = normalized.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var segment in segments)
+                {
+                    string trimmedSegment = segment.Trim();
+                    if (trimmedSegment.Length == 0)
+                        continue;
+
+                    if (string.Equals(trimmedSegment, ModRoots.FolderName(ModRootKind.Logic), StringComparison.OrdinalIgnoreCase))
+                        return ModRootKind.Logic;
+                    if (string.Equals(trimmedSegment, ModRoots.FolderName(ModRootKind.Legacy), StringComparison.OrdinalIgnoreCase))
+                        return ModRootKind.Legacy;
+                    if (string.Equals(trimmedSegment, ModRoots.FolderName(ModRootKind.Standard), StringComparison.OrdinalIgnoreCase))
+                        return ModRootKind.Standard;
+                }
+
+                string ext = Path.GetExtension(normalized).ToLowerInvariant();
+                if (ext == ".lua" || ext == ".dll")
+                {
+                    hasScript = true;
+                }
+            }
+
+            return hasScript ? ModRootKind.Logic : ModRootKind.Standard;
+        }
+
         private void OnStartGameClicked(object sender, EventArgs e)
         {
             try
@@ -366,18 +512,20 @@ namespace ModManager.Presenters
                     return;
                 
                 var mods = _modService.GetMods();
-                var mod = mods.FirstOrDefault(m => m.Name == e.ModName);
-                
+                var mod = mods.FirstOrDefault(m => m.Key == e.ModKey);
+
                 if (mod == null)
                     return;
-                
+
                 if (e.IsEnabled)
                 {
-                    _modService.ActivateMod(mod.Path);
+                    // Logic toggles rename the folder; each subsequent handler re-resolves the
+                    // mod via a fresh GetMods() by Key, so the stale ModInfo.Path is never reused.
+                    RunSuppressingWatcher(() => _modService.ActivateMod(mod.Path));
                 }
                 else
                 {
-                    _modService.DeactivateMod(mod.Path);
+                    RunSuppressingWatcher(() => _modService.DeactivateMod(mod.Path));
                 }
                 
                 RefreshModsList();
@@ -404,21 +552,21 @@ namespace ModManager.Presenters
                 }
                 
                 var mods = _modService.GetMods();
-                var mod = mods.FirstOrDefault(m => m.Name == e.ModName);
-                
+                var mod = mods.FirstOrDefault(m => m.Key == e.ModKey);
+
                 if (mod == null)
                 {
                     _view.ShowMessage($"Mod '{e.ModName}' not found.", "Error", MessageType.Error);
                     return;
                 }
-                
+
                 _view.ShowProgress("Deleting mod...");
                 
                 try
                 {
                     if (Directory.Exists(mod.Path))
                     {
-                        Directory.Delete(mod.Path, true);
+                        RunSuppressingWatcher(() => Directory.Delete(mod.Path, true));
                     }
 
                     _view.ShowMessage($"Mod '{e.ModName}' has been successfully deleted.", "Mod Deleted", MessageType.Information);
@@ -568,6 +716,44 @@ namespace ModManager.Presenters
             catch (Exception ex)
             {
                 _view.ShowMessage($"Error saving mod metadata: {ex.Message}", "Error", MessageType.Error);
+            }
+        }
+
+        private void OnModRenameRequested(object sender, ModRenameEventArgs e)
+        {
+            try
+            {
+                if (_modService == null)
+                {
+                    _view.ShowMessage("Mod service not initialized.", "Error", MessageType.Error);
+                    return;
+                }
+
+                var mods = _modService.GetMods();
+                var mod = mods.FirstOrDefault(m => m.Key == e.ModKey);
+
+                if (mod == null)
+                {
+                    _view.ShowMessage($"Mod '{e.ModName}' not found.", "Error", MessageType.Error);
+                    return;
+                }
+
+                string newName = _view.ShowRenameModDialog(mod.Name);
+                if (string.IsNullOrWhiteSpace(newName))
+                    return;
+
+                newName = newName.Trim();
+                if (string.Equals(newName, mod.Name, StringComparison.Ordinal))
+                    return;
+
+                RunSuppressingWatcher(() => _modService.RenameMod(mod.Path, newName));
+                _profileService.RenameModInProfiles(mod.RootKind, mod.Name, newName);
+
+                RefreshModsList();
+            }
+            catch (Exception ex)
+            {
+                _view.ShowMessage($"Error renaming mod: {ex.Message}", "Error", MessageType.Error);
             }
         }
     }

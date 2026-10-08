@@ -19,6 +19,7 @@ namespace ModManager.Views
         event EventHandler<ModToggleEventArgs> ModToggled;
         event EventHandler<ModDeleteEventArgs> ModDeleteRequested;
         event EventHandler<ModEditEventArgs> ModEditRequested;
+        event EventHandler<ModRenameEventArgs> ModRenameRequested;
 
         event EventHandler<ViewProfileEventArgs> ProfileSelected;
         event EventHandler CreateProfileClicked;
@@ -41,17 +42,21 @@ namespace ModManager.Views
         bool ShowConfirmDialog(string message, string title);
         string ShowCreateProfileDialog(string defaultName = "");
         ModMetadataResult? ShowEditModDialog(ModInfo mod);
+        string ShowRenameModDialog(string currentName);
+        ModRootKind? ShowSelectModRootDialog(string modName, ModRootKind detectedKind);
     }
     
     public class ModToggleEventArgs : EventArgs
     {
         public string ModName { get; set; }
+        public string ModKey { get; set; }
         public bool IsEnabled { get; set; }
-        
-        public ModToggleEventArgs(string modName, bool isEnabled)
+
+        public ModToggleEventArgs(string modName, bool isEnabled, string modKey = null)
         {
             ModName = modName;
             IsEnabled = isEnabled;
+            ModKey = modKey ?? modName;
         }
     }
 
@@ -80,10 +85,12 @@ namespace ModManager.Views
     public class ModDeleteEventArgs : EventArgs
     {
         public string ModName { get; set; }
-        
-        public ModDeleteEventArgs(string modName)
+        public string ModKey { get; set; }
+
+        public ModDeleteEventArgs(string modName, string modKey = null)
         {
             ModName = modName;
+            ModKey = modKey ?? modName;
         }
     }
     
@@ -98,6 +105,17 @@ namespace ModManager.Views
     {
         public ModInfo Mod { get; }
         public ModEditEventArgs(ModInfo mod) => Mod = mod;
+    }
+
+    public class ModRenameEventArgs : EventArgs
+    {
+        public string ModName { get; }
+        public string ModKey { get; }
+        public ModRenameEventArgs(string modName, string modKey = null)
+        {
+            ModName = modName;
+            ModKey = modKey ?? modName;
+        }
     }
 
     public sealed record ModMetadataResult(

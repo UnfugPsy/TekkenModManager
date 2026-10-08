@@ -85,11 +85,11 @@ namespace ModManager.Services
         public ModProfile CreateFromCurrentState(string name, string description, List<ModInfo> currentMods)
         {
             EnsureInitialized();
-            var enabledModNames = currentMods.Where(m => m.IsEnabled).Select(m => m.Name).ToList();
-            var profile = new ModProfile(name, description, enabledModNames);
+            var enabledModKeys = currentMods.Where(m => m.IsEnabled).Select(m => m.Key).ToList();
+            var profile = new ModProfile(name, description, enabledModKeys);
             _profiles.Add(profile);
             SaveProfiles();
-            
+
             FireProfilesChanged(ProfileEventType.Created, profile);
             return profile;
         }
@@ -164,8 +164,8 @@ namespace ModManager.Services
             if (profile == null) return;
 
             var allMods = modService.GetMods();
-            var toDeactivate = allMods.Where(m => m.IsEnabled && !profile.EnabledMods.Contains(m.Name)).ToList();
-            var toActivate = allMods.Where(m => !m.IsEnabled && profile.EnabledMods.Contains(m.Name)).ToList();
+            var toDeactivate = allMods.Where(m => m.IsEnabled && !profile.EnabledMods.Contains(m.Key)).ToList();
+            var toActivate = allMods.Where(m => !m.IsEnabled && profile.EnabledMods.Contains(m.Key)).ToList();
 
             foreach (var mod in toDeactivate)
                 modService.DeactivateMod(mod.Path);
@@ -185,11 +185,45 @@ namespace ModManager.Services
             var profile = _profiles.FirstOrDefault(p => p.Id == profileId);
             if (profile == null) return;
 
-            profile.EnabledMods = currentMods.Where(m => m.IsEnabled).Select(m => m.Name).ToList();
+            profile.EnabledMods = currentMods.Where(m => m.IsEnabled).Select(m => m.Key).ToList();
             profile.LastUsed = DateTime.Now;
             SaveProfiles();
-            
+
             FireProfilesChanged(ProfileEventType.Updated, profile);
+        }
+
+        public void RenameModInProfiles(ModRootKind rootKind, string oldName, string newName)
+        {
+            EnsureInitialized();
+
+            if (string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName))
+                return;
+
+            string oldKey = $"{rootKind}:{oldName}";
+            string newKey = $"{rootKind}:{newName}";
+
+            bool anyChanged = false;
+            foreach (var profile in _profiles)
+            {
+                if (profile.EnabledMods == null)
+                    continue;
+
+                bool changed = false;
+                for (int i = 0; i < profile.EnabledMods.Count; i++)
+                {
+                    if (string.Equals(profile.EnabledMods[i], oldKey, StringComparison.Ordinal))
+                    {
+                        profile.EnabledMods[i] = newKey;
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                    anyChanged = true;
+            }
+
+            if (anyChanged)
+                SaveProfiles();
         }
 
         private void EnsureDefaultProfile()
@@ -198,6 +232,33 @@ namespace ModManager.Services
             {
                 CreateDefaultProfileSilently();
             }
+        }
+
+        /// <summary>
+        /// Migrates profiles saved before multi-root support (bare mod names) to the
+        /// "RootKind:Name" key format, defaulting legacy entries to the Standard root.
+        /// </summary>
+        private void MigrateLegacyEnabledModKeys()
+        {
+            bool anyChanged = false;
+            foreach (var profile in _profiles)
+            {
+                if (profile.EnabledMods == null)
+                    continue;
+
+                for (int i = 0; i < profile.EnabledMods.Count; i++)
+                {
+                    string entry = profile.EnabledMods[i];
+                    if (string.IsNullOrEmpty(entry) || entry.Contains(':'))
+                        continue;
+
+                    profile.EnabledMods[i] = $"{ModRootKind.Standard}:{entry}";
+                    anyChanged = true;
+                }
+            }
+
+            if (anyChanged)
+                SaveProfiles();
         }
 
         private void CreateDefaultProfileSilently()
@@ -237,6 +298,7 @@ namespace ModManager.Services
                     {
                         var profiles = JsonSerializer.Deserialize<List<ModProfile>>(json);
                         _profiles = profiles ?? new List<ModProfile>();
+                        MigrateLegacyEnabledModKeys();
                     }
                     else
                     {

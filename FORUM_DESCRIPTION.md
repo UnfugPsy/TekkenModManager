@@ -36,11 +36,13 @@ Setting your game location opens a simple folder browser — just select your Pa
 ## Features at a glance
 
 - One-click enable/disable via the ACTIVE checkbox (auto file renaming)
-- Install from ZIP / RAR / 7Z — button or drag and drop
+- Supports all three mod folders — Mods, ~mods, and LogicMods (UE4SS script mods)
+- Install from ZIP / RAR / 7Z — button or drag and drop, with automatic folder detection
 - Profiles — save and apply sets of enabled mods, with a default profile
 - Conflict detection for mods sharing the same pak name
 - Editable metadata — version, category, author, description per mod
-- Search by name, category, or author
+- Rename a mod's folder right from the list (F2)
+- Search by name, category, author, or type
 - Handy keyboard shortcuts
 - Clean, modern Windows interface
 
@@ -49,6 +51,7 @@ Setting your game location opens a simple folder browser — just select your Pa
 ## Keyboard shortcuts
 
 - **F1** — Show help dialog
+- **F2** — Rename the selected mod
 - **F5** — Refresh mod list
 - **Ctrl + G** — Set game location
 - **Ctrl + O** — Open mod folder
@@ -61,13 +64,15 @@ Setting your game location opens a simple folder browser — just select your Pa
 
 Grab the latest release, pick **one** of the two builds, extract it anywhere, and run **ModManager.exe**. No setup and no admin rights needed.
 
+> ⚠️ **Experimental build** — 1.1.0-experimental adds multi-root support (Mods / ~mods / LogicMods) and real-time folder watching. It's provided for testing; please back up your mods first and report anything that misbehaves.
+
 **Recommended — Self-contained** (about 63 MB)
 Everything is bundled. Nothing extra to install. Just unzip and run.
-File: **TekkenModManager-1.0.2-win-x64-selfcontained.zip**
+File: **TekkenModManager-1.1.0-experimental-win-x64-selfcontained.zip**
 
 **Smaller — Framework-dependent** (about 1 MB)
 Tiny download, but it needs the **.NET 8 Desktop Runtime (x64)** installed on your PC.
-File: **TekkenModManager-1.0.2-win-x64-framework-dependent.zip**
+File: **TekkenModManager-1.1.0-experimental-win-x64-framework-dependent.zip**
 Get the runtime here: https://dotnet.microsoft.com/download/dotnet/8.0
 
 > If you use the smaller build and the app won't open, install the **.NET 8 Desktop Runtime (x64)** from the link above and try again.
@@ -76,8 +81,8 @@ Get the runtime here: https://dotnet.microsoft.com/download/dotnet/8.0
 
 ## Getting started
 
-1. **Set your game location** — click Set Game Location (Ctrl + G) and pick your TEKKEN 8 Paks folder (typically TEKKEN8 \ Polaris \ Content \ Paks). A Mods folder is created automatically if it doesn't exist yet.
-2. **Add a mod** — click Add Zipped Mod (Ctrl + N), or drag a ZIP / RAR / 7Z onto the window.
+1. **Set your game location** — click Set Game Location (Ctrl + G) and pick your TEKKEN 8 Paks folder (typically TEKKEN8 \ Polaris \ Content \ Paks). The Mods, ~mods, and LogicMods folders are used automatically if they exist.
+2. **Add a mod** — click Add Zipped Mod (Ctrl + N), or drag a ZIP / RAR / 7Z onto the window. The manager detects whether it's a standard, legacy, or logic mod and lets you confirm the destination folder.
 3. **Enable or disable** — tick the ACTIVE checkbox; the STATUS column shows ACTIVE or INACTIVE.
 
 ![](https://dist.tekkenmods.com/dist-cache/1920/80945/media/3ef5b6328d01a4d75c4356ccff37a246-628x430.png)
@@ -118,6 +123,8 @@ If you grabbed the smaller framework-dependent build, install the **.NET 8 Deskt
 - 1.0.0: Initial release
 - 1.0.1: Fix "Directory does not exist to extract to" when adding .rar/.7z mods (create destination directory before extraction in ExtractArchive)
 - 1.0.2: Fix mods that stay inactive and can't be toggled when their .pak/.ucas/.utoc files live in a nested subfolder (e.g. Content/Paks)
+- 1.0.3: Add the ability to rename a mod's folder from the list (right-click > Rename, or press F2); profile references update automatically
+- 1.1.0-experimental: Support all three mod folders (Mods, ~mods, LogicMods) in one list with a new TYPE column; auto-detect the target folder when adding a mod; logic (UE4SS script) mods now enable/disable correctly via folder renaming; real-time folder watching; existing setups migrate automatically. Experimental — testing feedback welcome
 
 ---
 

@@ -199,7 +199,7 @@ namespace ModManager
       lblInstructions.Padding = new Padding(15, 0, 80, 0);
       lblInstructions.Size = new Size(800, 32);
       lblInstructions.TabIndex = 3;
-      lblInstructions.Text = "Double-click mod rows to enable/disable them • F5: Refresh • Ctrl+G: Set Game Location • F1: Help";
+      lblInstructions.Text = "Double-click mod rows to enable/disable them • F2: Rename • F5: Refresh • Ctrl+G: Set Game Location • F1: Help";
       lblInstructions.TextAlign = ContentAlignment.MiddleLeft;
       
       btnHelp.Anchor = AnchorStyles.Top | AnchorStyles.Right;

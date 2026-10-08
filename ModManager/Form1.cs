@@ -24,6 +24,7 @@ namespace ModManager
     public event EventHandler<ModToggleEventArgs> ModToggled;
     public event EventHandler<ModDeleteEventArgs> ModDeleteRequested;
     public event EventHandler<ModEditEventArgs> ModEditRequested;
+    public event EventHandler<ModRenameEventArgs> ModRenameRequested;
     
     public event EventHandler<ViewProfileEventArgs> ProfileSelected;
     public event EventHandler CreateProfileClicked;
@@ -169,7 +170,18 @@ namespace ModManager
         e.Handled = true;
         return;
       }
-      
+
+      if (e.KeyCode == Keys.F2)
+      {
+        var mod = _modViewManager?.SelectedMod;
+        if (mod != null)
+        {
+          ModRenameRequested?.Invoke(this, new ModRenameEventArgs(mod.Name, mod.Key));
+          e.Handled = true;
+          return;
+        }
+      }
+
       base.OnKeyDown(e);
     }
 
@@ -288,6 +300,10 @@ namespace ModManager
       editItem.Click += ContextMenu_EditMod;
       _listViewContextMenu.Items.Add(editItem);
 
+      var renameItem = new ToolStripMenuItem("Rename Mod");
+      renameItem.Click += ContextMenu_RenameMod;
+      _listViewContextMenu.Items.Add(renameItem);
+
       _listViewContextMenu.Items.Add(new ToolStripSeparator());
       
       var deleteItem = new ToolStripMenuItem("Delete Mod");
@@ -311,7 +327,7 @@ namespace ModManager
     {
       var mod = _modViewManager?.SelectedMod;
       if (mod == null) return;
-      ModToggled?.Invoke(this, new ModToggleEventArgs(mod.Name, !mod.IsEnabled));
+      ModToggled?.Invoke(this, new ModToggleEventArgs(mod.Name, !mod.IsEnabled, mod.Key));
     }
 
     private void ContextMenu_EditMod(object sender, EventArgs e)
@@ -321,11 +337,18 @@ namespace ModManager
       ModEditRequested?.Invoke(this, new ModEditEventArgs(mod));
     }
 
+    private void ContextMenu_RenameMod(object sender, EventArgs e)
+    {
+      var mod = _modViewManager?.SelectedMod;
+      if (mod == null) return;
+      ModRenameRequested?.Invoke(this, new ModRenameEventArgs(mod.Name, mod.Key));
+    }
+
     private void ContextMenu_DeleteMod(object sender, EventArgs e)
     {
       var mod = _modViewManager?.SelectedMod;
       if (mod == null) return;
-      ModDeleteRequested?.Invoke(this, new ModDeleteEventArgs(mod.Name));
+      ModDeleteRequested?.Invoke(this, new ModDeleteEventArgs(mod.Name, mod.Key));
     }
 
     private void ContextMenu_OpenModFolder(object sender, EventArgs e)
@@ -592,6 +615,30 @@ namespace ModManager
       if (dlg.ShowDialog(this) != DialogResult.OK)
         return null;
       return new ModMetadataResult(dlg.ResultVersion, dlg.ResultCategory, dlg.ResultDescription, dlg.ResultAuthor);
+    }
+
+    public string ShowRenameModDialog(string currentName)
+    {
+      using var dialog = new CreateProfileDialog(
+        defaultName: currentName,
+        defaultDescription: string.Empty,
+        title: "Rename Mod",
+        confirmText: "Rename");
+      if (dialog.ShowDialog(this) == DialogResult.OK)
+      {
+        return dialog.ProfileName;
+      }
+      return string.Empty;
+    }
+
+    public ModRootKind? ShowSelectModRootDialog(string modName, ModRootKind detectedKind)
+    {
+      using var dialog = new SelectModRootDialog(modName, detectedKind);
+      if (dialog.ShowDialog(this) == DialogResult.OK)
+      {
+        return dialog.SelectedKind;
+      }
+      return null;
     }
 
     #endregion

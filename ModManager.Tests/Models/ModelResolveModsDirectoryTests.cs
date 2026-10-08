@@ -20,25 +20,36 @@ public class ModelResolveModsDirectoryTests : IDisposable
     }
 
     [Fact]
-    public void ResolveModsDirectory_ReturnsModsSubfolder_WhenPaksSelected()
+    public void ResolveModsDirectory_ReturnsPaks_WhenPaksSelected()
     {
         string paks = Path.Combine(_root, "Paks");
         Directory.CreateDirectory(paks);
 
         string result = Model.ResolveModsDirectory(paks);
 
-        Assert.Equal(Path.Combine(paks, "Mods"), result);
+        Assert.Equal(paks, result);
     }
 
     [Fact]
-    public void ResolveModsDirectory_ReturnsSameFolder_WhenModsSelected()
+    public void ResolveModsDirectory_ReturnsPaks_WhenModsSelected()
     {
         string mods = Path.Combine(_root, "Paks", "Mods");
         Directory.CreateDirectory(mods);
 
         string result = Model.ResolveModsDirectory(mods);
 
-        Assert.Equal(mods, result);
+        Assert.Equal(Path.Combine(_root, "Paks"), result);
+    }
+
+    [Fact]
+    public void ResolveModsDirectory_ReturnsPaks_WhenLogicModsSelected()
+    {
+        string logic = Path.Combine(_root, "Paks", "LogicMods");
+        Directory.CreateDirectory(logic);
+
+        string result = Model.ResolveModsDirectory(logic);
+
+        Assert.Equal(Path.Combine(_root, "Paks"), result);
     }
 
     [Fact]
@@ -49,7 +60,7 @@ public class ModelResolveModsDirectoryTests : IDisposable
 
         string result = Model.ResolveModsDirectory(paks);
 
-        Assert.Equal(Path.Combine(paks, "Mods"), result);
+        Assert.Equal(paks, result);
     }
 
     [Fact]
@@ -61,11 +72,11 @@ public class ModelResolveModsDirectoryTests : IDisposable
 
         string result = Model.ResolveModsDirectory(parent);
 
-        Assert.Equal(Path.Combine(paks, "Mods"), result);
+        Assert.Equal(paks, result);
     }
 
     [Fact]
-    public void ResolveModsDirectory_FindsMods_WhenParentContainsMods()
+    public void ResolveModsDirectory_ReturnsRoot_WhenParentContainsModFolder()
     {
         string mods = Path.Combine(_root, "Paks", "Mods");
         Directory.CreateDirectory(mods);
@@ -73,7 +84,7 @@ public class ModelResolveModsDirectoryTests : IDisposable
 
         string result = Model.ResolveModsDirectory(parent);
 
-        Assert.Equal(mods, result);
+        Assert.Equal(parent, result);
     }
 
     [Fact]
@@ -84,7 +95,7 @@ public class ModelResolveModsDirectoryTests : IDisposable
 
         string result = Model.ResolveModsDirectory(paks + Path.DirectorySeparatorChar);
 
-        Assert.Equal(Path.Combine(paks, "Mods"), result);
+        Assert.Equal(paks, result);
     }
 
     [Fact]
@@ -107,5 +118,37 @@ public class ModelResolveModsDirectoryTests : IDisposable
         string result = Model.ResolveModsDirectory(input);
 
         Assert.Null(result);
+    }
+
+    // --- MigrateLegacyModsPath ---
+
+    [Fact]
+    public void MigrateLegacyModsPath_WalksUp_FromModsToPaks()
+    {
+        string legacy = Path.Combine(_root, "Paks", "Mods");
+
+        string result = Model.MigrateLegacyModsPath(legacy);
+
+        Assert.Equal(Path.Combine(_root, "Paks"), result);
+    }
+
+    [Fact]
+    public void MigrateLegacyModsPath_LeavesPaksRootUnchanged()
+    {
+        string paks = Path.Combine(_root, "Paks");
+
+        string result = Model.MigrateLegacyModsPath(paks);
+
+        Assert.Equal(paks, result);
+    }
+
+    [Fact]
+    public void MigrateLegacyModsPath_TrimsTrailingSeparator()
+    {
+        string legacy = Path.Combine(_root, "Paks", "Mods") + Path.DirectorySeparatorChar;
+
+        string result = Model.MigrateLegacyModsPath(legacy);
+
+        Assert.Equal(Path.Combine(_root, "Paks"), result);
     }
 }
