@@ -582,6 +582,15 @@ namespace ModManager.Presenters
                     return;
                 }
 
+                bool confirmed = _view.ShowConfirmDialog(
+                    $"Delete '{mod.Name}' permanently?\n\nThe folder is removed from disk, not moved to the Recycle Bin.",
+                    "Delete Mod");
+
+                if (!confirmed)
+                {
+                    return;
+                }
+
                 _view.ShowProgress("Deleting mod...");
                 
                 try

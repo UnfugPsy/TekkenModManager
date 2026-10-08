@@ -336,14 +336,7 @@ namespace ModManager.Controls
 
             if (columnName == "Actions" && row.Tag is ModInfo actionMod)
             {
-                var result = MessageBox.Show(
-                    $"Are you sure you want to delete '{actionMod.Name}'?",
-                    "Delete Mod",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Yes)
-                    ModDeleteRequested?.Invoke(this, new ModDeleteEventArgs(actionMod.Name, actionMod.Key));
+                ModDeleteRequested?.Invoke(this, new ModDeleteEventArgs(actionMod.Name, actionMod.Key));
             }
         }
 
