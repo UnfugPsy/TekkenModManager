@@ -282,7 +282,7 @@ namespace ModManager.Presenters
             Directory.CreateDirectory(rootPath);
 
             string finalPath = Path.Combine(rootPath, archiveName);
-            string tempPath = Path.Combine(rootPath, $"_{archiveName}_tmp_{Guid.NewGuid():N}");
+            string tempPath = Path.Combine(rootPath, ModRoots.InstallTempName(archiveName));
 
             if (Directory.Exists(finalPath))
             {

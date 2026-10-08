@@ -36,6 +36,11 @@ namespace ModManager.Services
                 {
                     string folderName = Path.GetFileName(dir);
 
+                    if (ModRoots.IsInstallTempFolder(folderName))
+                    {
+                        continue;
+                    }
+
                     if (kind == ModRootKind.Logic)
                     {
                         bool disabled = folderName.StartsWith(ModRoots.DisabledPrefix, StringComparison.OrdinalIgnoreCase);

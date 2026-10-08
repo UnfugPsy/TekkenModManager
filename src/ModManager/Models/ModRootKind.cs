@@ -43,6 +43,25 @@ namespace ModManager.Models
             _ => kind.ToString()
         };
 
+        private const string InstallTempMarker = "_tmp_";
+
+        /// <summary>Name of the scratch folder an archive is extracted into before it is moved into place.</summary>
+        public static string InstallTempName(string modName) =>
+            $"_{modName}{InstallTempMarker}{Guid.NewGuid():N}";
+
+        /// <summary>True for a folder created by <see cref="InstallTempName"/>, which is not a mod.</summary>
+        public static bool IsInstallTempFolder(string folderName)
+        {
+            int marker = folderName.LastIndexOf(InstallTempMarker, StringComparison.Ordinal);
+            if (!folderName.StartsWith('_') || marker < 0)
+            {
+                return false;
+            }
+
+            string suffix = folderName.Substring(marker + InstallTempMarker.Length);
+            return suffix.Length == 32 && suffix.All(Uri.IsHexDigit);
+        }
+
         /// <summary>Resolves the on-disk folder name for a root kind.</summary>
         public static string FolderName(ModRootKind kind) =>
             FolderNames.TryGetValue(kind, out var name) ? name : kind.ToString();
